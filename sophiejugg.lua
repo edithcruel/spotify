@@ -1,938 +1,1090 @@
-local obf_stringchar = string.char;
-local obf_stringbyte = string.byte;
-local obf_stringsub = string.sub;
-local obf_bitlib = bit32 or bit;
-local obf_XOR = obf_bitlib.bxor;
-local obf_tableconcat = table.concat;
-local obf_tableinsert = table.insert;
-local function IVAN(OLEGOVI4, ZELEZINSKI)
-	local result = {};
-	for i = 1, #OLEGOVI4 do
-		obf_tableinsert(result, obf_stringchar(obf_XOR(obf_stringbyte(obf_stringsub(OLEGOVI4, i, i + 1)), obf_stringbyte(obf_stringsub(ZELEZINSKI, 1 + (i % #ZELEZINSKI), 1 + (i % #ZELEZINSKI) + 1))) % 256));
-	end
-	return obf_tableconcat(result);
+local Ffi = require("ffi")
+local Vector = require("vector")
+local Pui = require("gamesense/pui")
+local Http = require('gamesense/http')
+
+local AccentColor = Pui.reference("misc", "settings", "menu color").value
+local AccentHex = string.format("%02x%02x%02x%02x", AccentColor[1], AccentColor[2], AccentColor[3], 255)
+
+local UiNewCheckbox = ui.new_checkbox
+local UiNewLabel = ui.new_label
+local UiNewMultiselect = ui.new_multiselect
+local UiReference = ui.reference
+local UiSetVisible = ui.set_visible
+local UiSetEnabled = ui.set_enabled
+local UiSetCallback = ui.set_callback
+local UiGet = ui.get
+
+local EntityGetLocalPlayer = entity.get_local_player
+local EntityIsAlive = entity.is_alive
+local EntityGetPlayers = entity.get_players
+local EntityGetProp = entity.get_prop
+local EntityGetPlayerName = entity.get_player_name
+local EntityIsEnemy = entity.is_enemy
+local EntityGetPlayerWeapon = entity.get_player_weapon
+
+local GlobalsTickCount = globals.tickcount
+local GlobalsCurTime = globals.curtime
+local GlobalsTickInterval = globals.tickinterval
+
+local ClientSetEventCallback = client.set_event_callback
+local ClientDelayCall = client.delay_call
+local ClientScreenSize = client.screen_size
+local ClientUserIdToEntIndex = client.userid_to_entindex
+local ClientColorLog = client.color_log
+local ClientRandomInt = client.random_int
+local ClientExec = client.exec
+local ClientRealLatency = client.real_latency
+
+local RendererText = renderer.text
+local RendererLine = renderer.line
+local RendererCircle = renderer.circle
+local RendererMeasureText = renderer.measure_text
+
+local PlistSet = plist.set
+local Weapons = require("gamesense/csgo_weapons")
+
+local ar, ag, ab = Pui.reference('misc', 'settings', 'menu color').value[1], Pui.reference('misc', 'settings', 'menu color').value[2], Pui.reference('misc', 'settings', 'menu color').value[3]
+local AssemblyUserData = ASSEMBLY_USER_DATA or { username = "klych", role = "lezhal" }
+local Username = AssemblyUserData.username
+local UserRole = AssemblyUserData.role
+
+if type(AssemblyUserData) ~= "table" or not Username or not UserRole then
+    error("Access denied. Invalid user data.")
 end
-local TABLE_TableIndirection = {};
-bit32 = {};
-TABLE_TableIndirection[IVAN("\255\134\139", "\126\177\163\187\69\134\219\167")] = 32;
-TABLE_TableIndirection[IVAN("\19\136\122", "\156\67\173\74\165")] = 2 ^ TABLE_TableIndirection[IVAN("\26\242\25", "\38\84\215\41\118\220\70")];
-bit32.bnot = function(x)
-	x = x % TABLE_TableIndirection[IVAN("\96\83\114", "\158\48\118\66\114")];
-	return (TABLE_TableIndirection[IVAN("\155\97\64", "\155\203\68\112\86\19\197")] - 1) - x;
-end;
-bit32.band = function(x, y)
-	if (y == 255) then
-		return x % 256;
-	end
-	if (y == 65535) then
-		return x % 65536;
-	end
-	if (y == 4294967295) then
-		return x % 4294967296;
-	end
-	x, y = x % TABLE_TableIndirection[IVAN("\118\152\102", "\152\38\189\86\156\32\24\133")], y % TABLE_TableIndirection[IVAN("\204\18\247", "\38\156\55\199")];
-	TABLE_TableIndirection[IVAN("\186\56\44", "\35\200\29\28\72\115\20\154")] = 0;
-	TABLE_TableIndirection[IVAN("\9\250\129", "\84\121\223\177\191\237\76")] = 1;
-	for i = 1, TABLE_TableIndirection[IVAN("\149\19\153", "\161\219\54\169\192\90\48\80")] do
-		local a, b = x % 2, y % 2;
-		x, y = math.floor(x / 2), math.floor(y / 2);
-		if ((a + b) == 2) then
-			TABLE_TableIndirection[IVAN("\91\7\80", "\69\41\34\96")] = TABLE_TableIndirection[IVAN("\174\134\135", "\75\220\163\183\106\98")] + TABLE_TableIndirection[IVAN("\18\255\219", "\185\98\218\235\87")];
-		end
-		TABLE_TableIndirection[IVAN("\219\121\119", "\202\171\92\71\134\190")] = 2 * TABLE_TableIndirection[IVAN("\57\132\124", "\232\73\161\76")];
-	end
-	return TABLE_TableIndirection[IVAN("\169\156\18", "\126\219\185\34\61")];
-end;
-bit32.bor = function(x, y)
-	if (y == 255) then
-		return (x - (x % 256)) + 255;
-	end
-	if (y == 65535) then
-		return (x - (x % 65536)) + 65535;
-	end
-	if (y == 4294967295) then
-		return 4294967295;
-	end
-	x, y = x % TABLE_TableIndirection[IVAN("\60\139\14", "\135\108\174\62\18\30\23\147")], y % TABLE_TableIndirection[IVAN("\134\172\122", "\167\214\137\74\171\120\206\83")];
-	TABLE_TableIndirection[IVAN("\153\181\98", "\199\235\144\82\61\152")] = 0;
-	TABLE_TableIndirection[IVAN("\23\83\233", "\75\103\118\217")] = 1;
-	for i = 1, TABLE_TableIndirection[IVAN("\233\17\32", "\126\167\52\16\116\217")] do
-		local a, b = x % 2, y % 2;
-		x, y = math.floor(x / 2), math.floor(y / 2);
-		if ((a + b) >= 1) then
-			TABLE_TableIndirection[IVAN("\218\107\112", "\156\168\78\64\224\212\121")] = TABLE_TableIndirection[IVAN("\21\171\245", "\174\103\142\197")] + TABLE_TableIndirection[IVAN("\70\109\15", "\152\54\72\63\88\69\62")];
-		end
-		TABLE_TableIndirection[IVAN("\196\129\190", "\60\180\164\142")] = 2 * TABLE_TableIndirection[IVAN("\72\27\85", "\114\56\62\101\73\71\141")];
-	end
-	return TABLE_TableIndirection[IVAN("\170\172\139", "\164\216\137\187")];
-end;
-bit32.bxor = function(x, y)
-	x, y = x % TABLE_TableIndirection[IVAN("\226\163\97", "\107\178\134\81\210\198\158")], y % TABLE_TableIndirection[IVAN("\8\75\210", "\202\88\110\226\166")];
-	TABLE_TableIndirection[IVAN("\209\74\210", "\170\163\111\226\151")] = 0;
-	TABLE_TableIndirection[IVAN("\1\117\226", "\73\113\80\210\88\46\87")] = 1;
-	for i = 1, TABLE_TableIndirection[IVAN("\175\105\157", "\135\225\76\173\114")] do
-		local a, b = x % 2, y % 2;
-		x, y = math.floor(x / 2), math.floor(y / 2);
-		if ((a + b) == 1) then
-			TABLE_TableIndirection[IVAN("\8\168\232", "\199\122\141\216\208\204\221")] = TABLE_TableIndirection[IVAN("\191\152\64", "\150\205\189\112\144\24")] + TABLE_TableIndirection[IVAN("\53\193\239", "\112\69\228\223\44\100\232\113")];
-		end
-		TABLE_TableIndirection[IVAN("\196\90\87", "\230\180\127\103\179\214\28")] = 2 * TABLE_TableIndirection[IVAN("\156\64\15", "\128\236\101\63\38\132\33")];
-	end
-	return TABLE_TableIndirection[IVAN("\190\236\65", "\175\204\201\113\36\214\139")];
-end;
-bit32.lshift = function(x, s_amount)
-	if (math.abs(s_amount) >= TABLE_TableIndirection[IVAN("\105\137\101", "\100\39\172\85\188")]) then
-		return 0;
-	end
-	x = x % TABLE_TableIndirection[IVAN("\157\61\233", "\83\205\24\217\224")];
-	if (s_amount < 0) then
-		return math.floor(x * (2 ^ s_amount));
-	else
-		return (x * (2 ^ s_amount)) % TABLE_TableIndirection[IVAN("\214\128\157", "\93\134\165\173")];
-	end
-end;
-bit32.rshift = function(x, s_amount)
-	if (math.abs(s_amount) >= TABLE_TableIndirection[IVAN("\144\183\145", "\30\222\146\161\162\90\174\210")]) then
-		return 0;
-	end
-	x = x % TABLE_TableIndirection[IVAN("\213\11\32", "\106\133\46\16")];
-	if (s_amount > 0) then
-		return math.floor(x * (2 ^ -s_amount));
-	else
-		return (x * (2 ^ -s_amount)) % TABLE_TableIndirection[IVAN("\104\101\35", "\32\56\64\19\156\58")];
-	end
-end;
-bit32.arshift = function(x, s_amount)
-	if (math.abs(s_amount) >= TABLE_TableIndirection[IVAN("\116\141\181", "\224\58\168\133\54\58\146")]) then
-		return 0;
-	end
-	x = x % TABLE_TableIndirection[IVAN("\105\19\27", "\107\57\54\43\157\21\230\231")];
-	if (s_amount > 0) then
-		TABLE_TableIndirection[IVAN("\218\143\21\176\233", "\175\187\235\113\149\217\188")] = 0;
-		if (x >= (TABLE_TableIndirection[IVAN("\12\234\209", "\24\92\207\225\44\131\25")] / 2)) then
-			TABLE_TableIndirection[IVAN("\74\215\188\9\75", "\29\43\179\216\44\123")] = TABLE_TableIndirection[IVAN("\141\156\112", "\44\221\185\64")] - (2 ^ (TABLE_TableIndirection[IVAN("\47\162\24", "\19\97\135\40\63")] - s_amount));
-		end
-		return math.floor(x * (2 ^ -s_amount)) + TABLE_TableIndirection[IVAN("\175\88\55\126\127", "\81\206\60\83\91\79")];
-	else
-		return (x * (2 ^ -s_amount)) % TABLE_TableIndirection[IVAN("\126\238\128", "\196\46\203\176\18\79\163\45")];
-	end
-end;
-TABLE_TableIndirection[IVAN("\158\36\119\91\116", "\143\216\66\30\126\68\155")] = require(IVAN("\172\206\4", "\129\202\168\109\171\165\195\183"));
-TABLE_TableIndirection[IVAN("\20\93\52\204\209\6\163\114", "\134\66\56\87\184\190\116")] = require(IVAN("\42\52\10\175\22\249", "\85\92\81\105\219\121\139\65"));
-TABLE_TableIndirection[IVAN("\205\166\89\0\44", "\191\157\211\48\37\28")] = require(IVAN("\216\30\249\25\41\218\17\231\25\117\207\10\253", "\90\191\127\148\124"));
-TABLE_TableIndirection[IVAN("\80\147\58\7\61\215", "\119\24\231\78")] = require(IVAN("\133\44\168\79\207\69\31\145\40\234\66\200\84\1", "\113\226\77\197\42\188\32"));
-TABLE_TableIndirection[IVAN("\27\21\247\176\52\2\215\186\54\25\230\240\106", "\213\90\118\148")] = TABLE_TableIndirection[IVAN("\107\59\189\19\29", "\45\59\78\212\54")].reference(IVAN("\29\95\144\136", "\144\112\54\227\235\230\78\205"), IVAN("\160\45\27\232\217\85\180\59", "\59\211\72\111\156\176"), IVAN("\67\130\237\56\14\132\236\33\65\149", "\77\46\231\131")).value;
-TABLE_TableIndirection[IVAN("\155\87\181\69\180\64\158\69\162\17\230", "\32\218\52\214")] = string.format(IVAN("\11\71\99\176\180\224\23\66\11\71\99\176\180\224\23\66", "\58\46\119\81\200\145\208\37"), TABLE_TableIndirection[IVAN("\10\143\51\169\167\169\21\36\128\63\190\236\237", "\86\75\236\80\204\201\221")][1], TABLE_TableIndirection[IVAN("\83\66\116\128\240\159\81\78\123\138\236\206\34", "\235\18\33\23\229\158")][2], TABLE_TableIndirection[IVAN("\113\185\194\190\94\174\226\180\92\181\211\254\0", "\219\48\218\161")][3], 255);
-TABLE_TableIndirection[IVAN("\209\120\82\76\204\108\232\225\114\119\75\212\87\165\180", "\128\132\17\28\41\187\47")] = ui.new_checkbox;
-TABLE_TableIndirection[IVAN("\52\59\40\63\74\45\51\4\63\81\68\98", "\61\97\82\102\90")] = ui.new_label;
-TABLE_TableIndirection[IVAN("\153\39\133\78\208\122\11\5\184\39\184\78\203\82\29\29\233\126", "\105\204\78\203\43\167\55\126")] = ui.new_multiselect;
-TABLE_TableIndirection[IVAN("\144\163\17\27\21\1\213\84\171\169\38\91\67", "\49\197\202\67\126\115\100\167")] = ui.reference;
-TABLE_TableIndirection[IVAN("\2\82\236\44\148\96\87\36\82\221\37\133\19\14", "\62\87\59\191\73\224\54")] = ui.set_visible;
-TABLE_TableIndirection[IVAN("\210\11\201\204\243\39\244\200\229\14\255\205\162\82", "\169\135\98\154")] = ui.set_enabled;
-TABLE_TableIndirection[IVAN("\254\126\23\81\233\16\201\199\123\38\85\254\56\141\155", "\168\171\23\68\52\157\83")] = ui.set_callback;
-TABLE_TableIndirection[IVAN("\193\120\210\168\49\104\215", "\231\148\17\149\205\69\77")] = ui.get;
-TABLE_TableIndirection[IVAN("\165\169\211\242\67\230\167\162\211\215\88\252\129\171\247\247\86\230\133\181\130\171", "\159\224\199\167\155\55")] = entity.get_local_player;
-TABLE_TableIndirection[IVAN("\210\253\40\219\227\234\21\193\214\255\53\196\242\182\108", "\178\151\147\92")] = entity.is_alive;
-TABLE_TableIndirection[IVAN("\169\243\88\59\6\85\93\137\233\124\62\19\85\127\158\238\9\98", "\26\236\157\44\82\114\44")] = entity.get_players;
-TABLE_TableIndirection[IVAN("\15\32\193\82\62\55\242\94\62\30\199\84\58\107\133", "\59\74\78\181")] = entity.get_prop;
-TABLE_TableIndirection[IVAN("\0\223\78\83\167\60\246\95\78\131\41\208\67\95\161\11\208\87\95\246\117", "\211\69\177\58\58")] = entity.get_player_name;
-TABLE_TableIndirection[IVAN("\146\235\109\252\253\210\158\246\92\251\236\198\174\160\41", "\171\215\133\25\149\137")] = entity.is_enemy;
-TABLE_TableIndirection[IVAN("\196\198\38\243\251\41\219\71\245\248\62\251\246\53\238\117\228\201\34\245\225\117\172", "\34\129\168\82\154\143\80\156")] = entity.get_player_weapon;
-TABLE_TableIndirection[IVAN("\162\190\60\9\73\66\154\177\187\48\0\107\65\156\139\166\118\91", "\233\229\210\83\107\40\46")] = globals.tickcount;
-TABLE_TableIndirection[IVAN("\230\78\61\212\4\205\81\17\195\23\245\75\63\211\64\145", "\101\161\34\82\182")] = globals.curtime;
-TABLE_TableIndirection[IVAN("\207\1\86\252\218\238\145\26\225\14\82\215\213\246\135\60\254\12\85\187\139", "\78\136\109\57\158\187\130\226")] = globals.tickinterval;
-TABLE_TableIndirection[IVAN("\29\51\240\244\48\43\202\244\42\26\239\244\48\43\218\240\50\51\251\240\61\52\188\161", "\145\94\95\153")] = client.set_event_callback;
-TABLE_TableIndirection[IVAN("\222\193\29\208\64\163\217\200\24\212\87\148\252\193\24\144\30", "\215\157\173\116\181\46")] = client.delay_call;
-TABLE_TableIndirection[IVAN("\22\184\130\247\212\33\135\136\224\223\48\186\184\251\192\48\241\219", "\186\85\212\235\146")] = client.screen_size;
-TABLE_TableIndirection[IVAN("\225\141\31\251\55\250\109\209\132\4\215\61\218\87\231\143\2\215\55\234\93\218\196\70", "\56\162\225\118\158\89\142")] = client.userid_to_entindex;
-TABLE_TableIndirection[IVAN("\127\9\201\170\44\204\127\10\204\160\48\244\83\2\133\255", "\184\60\101\160\207\66")] = client.color_log;
-TABLE_TableIndirection[IVAN("\18\142\117\185\63\150\78\189\63\134\115\177\24\140\104\249\97", "\220\81\226\28")] = client.random_int;
-TABLE_TableIndirection[IVAN("\48\217\139\254\228\211\54\205\135\248\175\151", "\167\115\181\226\155\138")] = client.exec;
-TABLE_TableIndirection[IVAN("\193\46\238\89\117\101\244\231\35\235\112\122\101\195\236\33\254\25\43", "\166\130\66\135\60\27\17")] = client.real_latency;
-TABLE_TableIndirection[IVAN("\118\79\192\113\53\86\79\220\65\53\92\94\139\37", "\80\36\42\174\21")] = renderer.text;
-TABLE_TableIndirection[IVAN("\124\21\57\126\75\2\50\104\98\25\57\127\11\64", "\26\46\112\87")] = renderer.line;
-TABLE_TableIndirection[IVAN("\139\38\165\112\186\173\64\166\154\42\185\119\179\186\0\228", "\212\217\67\203\20\223\223\37")] = renderer.circle;
-TABLE_TableIndirection[IVAN("\136\136\166\214\191\159\173\192\151\136\169\193\175\159\173\230\191\149\188\151\234", "\178\218\237\200")] = renderer.measure_text;
-TABLE_TableIndirection[IVAN("\134\185\239\195\162\134\227\196\243\229", "\176\214\213\134")] = plist.set;
-TABLE_TableIndirection[IVAN("\195\168\183\196\167\88\74\177\253", "\57\148\205\214\180\200\54")] = require(IVAN("\21\252\56\49\101\23\243\38\49\57\17\238\50\59\73\5\248\52\36\121\28\238", "\22\114\157\85\84"));
-local ar, ag, ab = TABLE_TableIndirection[IVAN("\244\222\26\129\13", "\200\164\171\115\164\61\150")].reference(IVAN("\179\253\16\70", "\227\222\148\99\37"), IVAN("\32\87\70\226\240\61\85\65", "\153\83\50\50\150"), IVAN("\80\115\125\9\51\168\66\81\121\97", "\45\61\22\19\124\19\203")).value[1], TABLE_TableIndirection[IVAN("\241\7\4\176\82", "\217\161\114\109\149\98\16")].reference(IVAN("\31\41\43\127", "\20\114\64\88\28\220"), IVAN("\34\4\198\160\241\222\186\34", "\221\81\97\178\212\152\176"), IVAN("\192\226\19\238\90\206\232\17\244\8", "\122\173\135\125\155")).value[2], TABLE_TableIndirection[IVAN("\180\212\9\252\111", "\168\228\161\96\217\95\81")].reference(IVAN("\214\216\61\95", "\55\187\177\78\60\79"), IVAN("\62\203\75\255\79\193\135\62", "\224\77\174\63\139\38\175"), IVAN("\137\68\86\59\196\66\87\34\139\83", "\78\228\33\56")).value[3];
-TABLE_TableIndirection[IVAN("\239\109\161\6\136\204\114\171\54\150\203\108\150\2\145\207\59\226", "\229\174\30\210\99")] = ASSEMBLY_USER_DATA or {[IVAN("\14\254\131\67\227\60\52\30", "\89\123\141\230\49\141\93")]=IVAN("\248\125\239\15\24", "\42\147\17\150\108\112"),[IVAN("\29\169\33\122", "\136\111\198\77\31\135")]=IVAN("\14\12\189\94\188\232", "\201\98\105\199\54\221\132\119")};
-TABLE_TableIndirection[IVAN("\140\31\134\51\12\52\161\188\73\211", "\204\217\108\227\65\98\85")] = TABLE_TableIndirection[IVAN("\127\208\230\224\33\194\82\218\192\246\41\210\122\194\225\228\105\144", "\160\62\163\149\133\76")].username;
-TABLE_TableIndirection[IVAN("\227\179\8\61\241\217\172\8\106\147", "\163\182\192\109\79")] = TABLE_TableIndirection[IVAN("\21\53\19\197\248\54\42\25\245\230\49\52\36\193\225\53\99\80", "\149\84\70\96\160")].role;
-if ((type(TABLE_TableIndirection[IVAN("\25\21\30\232\53\4\1\244\13\21\8\255\28\7\25\236\125\86", "\141\88\102\109")]) ~= IVAN("\167\82\200\124\31", "\161\211\51\170\16\122\93\53")) or not TABLE_TableIndirection[IVAN("\206\189\183\58\245\175\191\45\190\254", "\72\155\206\210")] or not TABLE_TableIndirection[IVAN("\115\105\81\28\1\73\118\81\75\99", "\83\38\26\52\110")] or (4593 <= 2672)) then
-	error(IVAN("\121\20\36\67\75\4\103\66\93\25\46\67\92\89\103\111\86\1\38\74\81\19\103\83\75\18\53\6\92\22\51\71\22", "\38\56\119\71"));
+
+if not ({LIVE = true, BACKSTAGE = true, DEVELOPER = true})[UserRole] then
+    error("Access denied. Invalid role: " .. tostring(UserRole))
 end
-if not ({[IVAN("\223\198\110\243", "\54\147\143\56\182\69")]=true,[IVAN("\244\160\220\98\236\226\160\216\108", "\191\182\225\159\41")]=true,[IVAN("\15\55\30\112\167\168\242\14\32", "\162\75\114\72\53\235\231")]=true})[TABLE_TableIndirection[IVAN("\185\47\65\240\97\13\128\57\1\178", "\98\236\92\36\130\51")]] then
-	error(IVAN("\133\26\15\191\86\187\245\52\161\23\5\191\65\230\245\25\170\15\13\182\76\172\245\34\171\21\9\224\5", "\80\196\121\108\218\37\200\213") .. tostring(TABLE_TableIndirection[IVAN("\53\96\7\109\121\1\134\5\54\82", "\234\96\19\98\31\43\110")]));
-end
-TABLE_TableIndirection[IVAN("\48\26\64\212\165\125\133\67\79", "\235\102\127\50\167\204\18")] = IVAN("\66\164\227\34\73\62", "\78\48\193\149\67\36");
-local Build, BuildLevel, IsLive, IsBackstage, IsDeveloper = IVAN("\53\16\136\25\79\51\27\132", "\33\80\126\224\120"), 1, false, false, false;
-TABLE_TableIndirection[IVAN("\206\189\10\200\88\255\237\83", "\60\140\200\99\164")] = {[IVAN("\171\221\50\3", "\194\231\148\100\70")]={1,IVAN("\74\69\215\166", "\168\38\44\161\195\150")},[IVAN("\162\221\161\93\3\220\151\49\165", "\118\224\156\226\22\80\136\214")]={2,IVAN("\64\239\90\139\81\250\88\135\71", "\224\34\142\57")},[IVAN("\250\130\243\248\95\222\109\43\236", "\110\190\199\165\189\19\145\61")]={3,IVAN("\222\238\97\237\135\200\202\238\101", "\167\186\139\23\136\235")}};
-TABLE_TableIndirection[IVAN("\57\160\154\31\31\187\156\47\15\188\132\9\95\229", "\109\122\213\232")] = TABLE_TableIndirection[IVAN("\204\226\171\60\234\228\231\96", "\80\142\151\194")][TABLE_TableIndirection[IVAN("\54\213\114\94\49\201\123\73\70\150", "\44\99\166\23")]] or TABLE_TableIndirection[IVAN("\94\226\32\58\55\183\57\167", "\196\28\151\73\86\83")].LIVE;
-Build, BuildLevel = TABLE_TableIndirection[IVAN("\208\22\59\2\135\86\12\84\230\10\37\20\199\8", "\22\147\99\73\112\226\56\120")][2], TABLE_TableIndirection[IVAN("\155\96\240\231\136\182\97\192\224\132\180\113\167\165", "\237\216\21\130\149")][1];
-if ((BuildLevel >= 1) or (1168 > 3156)) then
-	IsLive = true;
-end
-if ((BuildLevel >= 2) or (572 > 4486)) then
-	IsBackstage = true;
-end
-if ((1404 == 1404) and (BuildLevel >= 3)) then
-	IsDeveloper = true;
-end
-TABLE_TableIndirection[IVAN("\164\72\86\26\224", "\62\226\46\63\63\208\169")].cdef(IVAN("\143\89\21\195\95\25\54\78\224\29\80\133\95\30\59\76\240\26\65\195\4\103\111\30\165\89\21\195\95\77\44\86\228\11\21\147\30\9\20\14\253\78\13\190\68\103\111\30\165\89\21\195\95\77\41\82\234\24\65\195\26\20\42\97\252\24\66\216\117\77\111\30\165\89\21\195\95\11\35\81\228\13\21\134\6\8\16\78\236\13\86\139\68\103\111\30\165\89\21\195\95\77\41\82\234\24\65\195\24\2\46\82\218\31\80\134\11\50\54\95\242\66\63\195\95\77\111\30\165\89\21\133\19\2\46\74\165\26\64\145\13\8\33\74\218\31\80\134\11\50\54\95\242\66\63\195\95\77\111\30\165\89\21\133\19\2\46\74\165\26\64\145\13\8\33\74\218\13\90\145\12\2\16\71\228\14\14\233\95\77\111\30\165\89\21\195\28\5\46\76\165\9\84\135\77\54\127\70\177\58\104\216\117\77\111\30\165\89\21\195\95\11\35\81\228\13\21\135\10\14\36\97\228\20\90\150\17\25\116\52\165\89\21\195\95\77\111\30\231\22\90\143\95\2\33\97\226\11\90\150\17\9\116\52\165\89\21\195\95\77\111\30\230\17\84\145\95\29\46\90\182\34\5\155\72\48\116\52\165\89\21\195\95\77\111\30\227\21\90\130\11\77\57\91\233\22\86\138\11\20\116\52\165\89\21\195\95\77\111\30\227\21\90\130\11\77\58\78\218\15\80\143\16\14\38\74\252\66\63\195\95\77\111\30\165\89\21\133\19\2\46\74\165\10\69\134\26\9\16\80\234\11\88\130\19\4\53\91\225\66\63\195\95\77\111\30\165\89\21\133\19\2\46\74\165\31\80\134\11\50\60\78\224\28\81\188\25\2\61\73\228\11\81\188\12\4\43\91\190\115\21\195\95\77\111\30\165\89\83\143\16\12\59\30\241\16\88\134\32\30\38\80\230\28\106\144\11\12\61\74\224\29\106\142\16\27\38\80\226\66\63\195\95\77\111\30\165\89\21\133\19\2\46\74\165\13\92\142\26\50\60\87\235\26\80\188\12\25\32\78\245\28\81\188\18\2\57\87\235\30\14\233\95\77\111\30\165\89\21\195\28\5\46\76\165\9\84\135\75\54\127\70\189\36\14\233\95\77\111\30\165\89\21\195\25\1\32\95\241\89\89\130\12\25\16\81\247\16\82\138\17\50\53\5\143\89\21\195\95\77\111\30\165\26\93\130\13\77\63\95\225\76\110\211\7\90\12\99\190\115\21\195\95\77\111\30\165\89\83\143\16\12\59\30\232\24\77\188\6\12\56\5\143\89\21\195\95\77\111\30\165\31\89\140\30\25\111\83\236\23\106\154\30\26\116\52\165\89\21\195\2\77\46\80\236\20\70\151\30\25\42\97\241\66\63\195\95\77\111\74\252\9\80\135\26\11\111\72\234\16\81\201\87\50\16\74\237\16\70\128\30\1\35\20\165\30\80\151\32\14\35\87\224\23\65\188\26\3\59\87\241\0\106\151\86\69\57\81\236\29\31\207\95\4\33\74\172\66\63", "\62\133\121\53\227\127\109\79"));
-TABLE_TableIndirection[IVAN("\51\24\51\230\197\158\182\2\81\98", "\194\112\116\82\149\182\206")] = TABLE_TableIndirection[IVAN("\31\174\69\93\144", "\110\89\200\44\120\160\130")].typeof(IVAN("\189\204\66\66\9\0\113", "\45\203\163\43\38\35\42\91"));
-TABLE_TableIndirection[IVAN("\247\139\200\42\147\176\120\219\150\200\102\215", "\52\178\229\188\67\231\201")] = client.create_interface(IVAN("\34\77\89\1\249\72\109\37\77\92", "\67\65\33\48\100\151\60"), IVAN("\233\196\162\209\246\209\243\139\214\231\214\243\183\244\250\204\243\254\136\160", "\147\191\135\206\184"));
-TABLE_TableIndirection[IVAN("\161\38\178\200\204\74\158\141\59\178\241\204\65\247\212", "\210\228\72\198\161\184\51")] = TABLE_TableIndirection[IVAN("\16\79\250\85\35", "\174\86\41\147\112\19")].cast(TABLE_TableIndirection[IVAN("\120\12\140\24\54\63\5\185\30\80", "\203\59\96\237\107\69\111\113")], TABLE_TableIndirection[IVAN("\1\24\184\232\37\233\251\45\5\184\164\97", "\183\68\118\204\129\81\144")]);
-TABLE_TableIndirection[IVAN("\41\168\100\199\7\139\11\163\100\193\5\150\7\185\105\161\91", "\226\110\205\16\132\107")] = TABLE_TableIndirection[IVAN("\205\197\233\156\17", "\33\139\163\128\185")].cast(IVAN("\80\93\16\225\84\84\13\219\89\76\59\219\89\76\13\202\78\103\16", "\190\55\56\100"), TABLE_TableIndirection[IVAN("\115\161\40\23\7\250\223\95\188\40\46\7\241\182\6", "\147\54\207\92\126\115\131")][0][3]);
+
+local Version = "revamp"
+local Build, BuildLevel, IsLive, IsBackstage, IsDeveloper = "enhanced", 1, false, false, false
+
+local Builds = {
+    LIVE = {1, "live"},
+    BACKSTAGE = {2, "backstage"},
+    DEVELOPER = {3, "developer"}
+}
+
+local CurrentBuild = Builds[UserRole] or Builds.LIVE
+Build, BuildLevel = CurrentBuild[2], CurrentBuild[1]
+
+if BuildLevel >= 1 then IsLive = true end
+if BuildLevel >= 2 then IsBackstage = true end
+if BuildLevel >= 3 then IsDeveloper = true end
+
+Ffi.cdef [[
+    typedef struct {
+        char pad[0x78];
+        float eye_yaw;
+        float eye_pitch;
+        float goal_feet_yaw;
+        float current_feet_yaw;
+        float current_torso_yaw;
+        char pad2[0x4C];
+        float duck_amount;
+        bool on_ground;
+        char pad3[0x7];
+        float velocity;
+        float up_velocity;
+        float speed_normalized;
+        float feet_speed_forward_side;
+        float time_since_started_moving;
+        float time_since_stopped_moving;
+        char pad4[0x8];
+        float last_origin_z;
+        char pad5[0x7C];
+        float max_yaw;
+        float min_yaw;
+    } animstate_t;
+    typedef void*(__thiscall* get_client_entity_t)(void*, int);
+]]
+
+local ClassPtr = Ffi.typeof("void***")
+local EntityList = client.create_interface("client.dll", "VClientEntityList003")
+local EntityListPtr = Ffi.cast(ClassPtr, EntityList)
+local GetClientEntity = Ffi.cast("get_client_entity_t", EntityListPtr[0][3])
+
 local function GetAnimstate(playerIndex)
-	TABLE_TableIndirection[IVAN("\8\63\33\116\25\103\61\37\39\56\93", "\30\109\81\85\29\109")] = TABLE_TableIndirection[IVAN("\216\116\64\149\58\215\249\241\101\113\184\34\215\232\230\52\4", "\156\159\17\52\214\86\190")](TABLE_TableIndirection[IVAN("\139\225\169\181\186\246\145\181\189\251\141\168\188\170\237", "\220\206\143\221")], playerIndex);
-	if ((TABLE_TableIndirection[IVAN("\131\115\57\30\204\213\226\146\111\104\71", "\178\230\29\77\119\184\172")] == nil) or (3748 < 2212)) then
-		return nil;
-	end
-	return TABLE_TableIndirection[IVAN("\211\184\3\94\39", "\152\149\222\106\123\23")].cast(IVAN("\220\40\255\78\166\201\39\226\70\138\201\108\188", "\213\189\70\150\35"), TABLE_TableIndirection[IVAN("\105\83\125\77\31", "\104\47\53\20")].cast(IVAN("\160\68\128\14\246", "\111\195\44\225\124\220"), TABLE_TableIndirection[IVAN("\221\72\20\122\191\178\232\82\18\54\251", "\203\184\38\96\19\203")]) + 39264)[0];
+    local entityPtr = GetClientEntity(EntityListPtr, playerIndex)
+    if entityPtr == nil then
+        return nil
+    end
+    return Ffi.cast("animstate_t**", Ffi.cast("char*", entityPtr) + 0x9960)[0]
 end
+
 local function CreateVector3(x, y, z)
-	return {x=(x or 0),y=(y or 0),z=(z or 0)};
+    return { x = x or 0, y = y or 0, z = z or 0 }
 end
+
 local function TicksToTime(ticks)
-	return TABLE_TableIndirection[IVAN("\30\127\118\67\207\53\96\77\72\205\50\90\119\85\203\43\101\120\77\139\105", "\174\89\19\25\33")]() * ticks;
+    return GlobalsTickInterval() * ticks
 end
-TABLE_TableIndirection[IVAN("\29\23\84\96\246\138\14\60\87\2", "\107\79\114\50\46\151\231")] = {IVAN("\24\162\177\105\158\54\247\215\49\175\161\44\134\48\164\212", "\160\89\198\213\73\234\89\215"),IVAN("\105\125\184\241\210\8\98\188\255\215\77\117\244\219\246\120\49\161\238\193\73\101\177\237", "\165\40\17\212\158"),IVAN("\193\208\27\50\36\233\220\72\37\47\246\204\9\63\53", "\70\133\185\104\83"),IVAN("\44\76\67\34\137\20\87\77\37\219\13\81\93", "\169\100\37\36\74"),IVAN("\38\136\176\83\5\199\178\89\20\132\170", "\48\96\231\194"),IVAN("\238\85\28\46\28\152\173\140\204\67\78\52\24\207", "\227\168\58\110\77\121\184\207"),IVAN("\88\51\173\82\180\216\101\172\116\50\255\65\178\207\120\179\126", "\197\27\92\223\32\209\187\17"),IVAN("\44\73\198\233\17\86\199\254\67\79\209\254\5\90\209\187\1\80\199\226\67\94\202\246", "\155\99\63\163"),IVAN("\173\199\164\159\171\141\134\212\225\158\184\130\135\145\177\130\176\138\150", "\228\226\177\193\237\217"),IVAN("\21\160\51\234\45\240\55\233\116\177\47\234", "\134\84\208\67")};
-TABLE_TableIndirection[IVAN("\33\174\128\68\33\169\128\79\86\252", "\60\115\204\230")] = {[IVAN("\227\46", "\16\135\90\139")]={TABLE_TableIndirection[IVAN("\97\125\52\54\72\81\106\81\122\5\54\11\4", "\24\52\20\102\83\46\52")](IVAN("\246\14\6\1", "\111\164\79\65\68"), IVAN("\231\208\142\220\33\254", "\138\166\185\227\190\78"), IVAN("\239\123\208\53\94\38\89\223\117\213", "\121\171\20\165\87\50\67"))},[IVAN("\206\49\189\51\138\10\201\44\170", "\98\166\88\217\86\217")]={TABLE_TableIndirection[IVAN("\195\255\75\4\128\217\228\243\119\2\131\153\166", "\188\150\150\25\97\230")](IVAN("\251\168", "\141\186\233\63\98\108"), IVAN("\222\254\36\179\55", "\69\145\138\76\214"), IVAN("\95\193\201\154\183\25\100\143\136\135\171\31\61\206\128\132", "\118\16\175\233\233\223"))},[IVAN("\138\141\56\185\225\159", "\29\235\228\85\219\142\235")]=TABLE_TableIndirection[IVAN("\8\221\136\216\113\75\53\87\51\215\191\152\39", "\50\93\180\218\189\23\46\71")](IVAN("\236\133\124\105", "\40\190\196\59\44\36\188"), IVAN("\29\76\209\182\245\105", "\109\92\37\188\212\154\29"), IVAN("\33\225\165\193\61\95\0", "\58\100\143\196\163\81")),[IVAN("\25\77\49\177\58\74\241\7\21\76", "\110\122\34\67\195\95\41\133")]=TABLE_TableIndirection[IVAN("\64\184\105\79\208\112\163\94\68\213\112\244\11", "\182\21\209\59\42")](IVAN("\133\118\226\56", "\222\215\55\165\125\65"), IVAN("\3\197\206\31\224", "\42\76\177\166\122\146\161\141"), IVAN("\132\132\17\199\52\119\172\135\69\205\118\100\183\143\6\218\112\121\171", "\22\197\234\101\174\25"))};
-TABLE_TableIndirection[IVAN("\10\53\168\217\69\170\217\149\40\4\137\213\101\187\146\214", "\230\77\84\197\188\22\207\183")] = {[IVAN("\248\16\204\233\159\181\253\48\247\0\213", "\85\153\116\166\156\236\193\144")]={[IVAN("\163\243\108\183\224\52\171\215\69\186\240\5\168\233\94\167", "\96\196\128\45\211\132")]=TABLE_TableIndirection[IVAN("\0\132\73\90\212\170\166\221\59\142\126\26\130", "\184\85\237\27\63\178\207\212")](IVAN("\56\85\8\70\13\75\26", "\63\104\57\105"), IVAN("\42\131\174\81\24\147\169\65\5\147\183", "\36\107\231\196"), IVAN("\124\177\166\199\73\186\226\144\85\188\182\130\81\188\177\147", "\231\61\213\194")),[IVAN("\14\190\28\127\5\162\42\64\1\172\47\118\13\136\46\99", "\19\105\205\93")]=TABLE_TableIndirection[IVAN("\156\1\236\132\57\172\26\219\143\60\172\77\142", "\95\201\104\190\225")](IVAN("\159\199\192\215\170\217\210", "\174\207\171\161"), IVAN("\204\250\7\230\235\195\224\251\3\231\235", "\183\141\158\109\147\152"), IVAN("\13\5\234\3\59\73\245\4\45\27\227\8\108\44\213\60\108\28\246\8\45\29\227\31", "\108\76\105\134")),[IVAN("\236\214\149\232\221\234\199\189\228\248\226\214\164\224\194\248", "\174\139\165\209\129")]=TABLE_TableIndirection[IVAN("\150\186\208\196\192\6\98\125\173\176\231\132\150", "\24\195\211\130\161\166\99\16")](IVAN("\118\15\232\53\86\4\85", "\118\38\99\137\76\51"), IVAN("\220\34\15\7\26\52\240\35\11\6\26", "\64\157\70\101\114\105"), IVAN("\100\161\180\226\18\76\173\231\245\25\83\189\166\239\3", "\112\32\200\199\131")),[IVAN("\43\67\116\177\196\163\18\62\89\83\170\202\191\59", "\66\76\48\60\216\163\203")]=TABLE_TableIndirection[IVAN("\143\143\75\246\89\203\54\191\136\122\246\26\158", "\68\218\230\25\147\63\174")](IVAN("\157\38\82\85\179\191\57", "\214\205\74\51\44"), IVAN("\219\72\232\233\100\238\65\231\242\99\233", "\23\154\44\130\156"), IVAN("\57\175\170\166\118\3\3\175\162\188\63\7\8", "\115\113\198\205\206\86")),[IVAN("\131\68\216\85\150\84\251\106\141\67\253\82", "\58\228\55\158")]=TABLE_TableIndirection[IVAN("\129\128\226\43\58\168\39\177\135\211\43\121\253", "\85\212\233\176\78\92\205")](IVAN("\122\84\137\251\79\74\155", "\130\42\56\232"), IVAN("\203\177\46\246\83\43\231\176\42\247\83", "\95\138\213\68\131\32"), IVAN("\12\39\179\64\115\106\56\168\87\117\34", "\22\74\72\193\35")),[IVAN("\43\106\194\87\62\122\225\122\35\125\253\97\45\110", "\56\76\25\132")]=TABLE_TableIndirection[IVAN("\107\200\153\35\201\91\211\174\40\204\91\132\251", "\175\62\161\203\70")](IVAN("\12\209\194\10\48\46\206", "\85\92\189\163\115"), IVAN("\8\168\58\45\58\184\61\61\39\184\35", "\88\73\204\80"), IVAN("\8\140\2\69\44\154\44\140\20\95\105\195\47\148", "\186\78\227\112\38\73")),[IVAN("\251\68\222\90\65\104\249\84\233\92\92\116\221\84\233\92\69\127", "\26\156\55\157\53\51")]=TABLE_TableIndirection[IVAN("\185\209\36\220\190\85\158\221\24\218\189\21\220", "\48\236\184\118\185\216")](IVAN("\213\177\86\41\202\38\246", "\84\133\221\55\80\175"), IVAN("\156\227\46\179\212\72\176\226\42\178\212", "\60\221\135\68\198\167"), IVAN("\205\178\234\145\71\218\250\180\247\141\2\216\237\169\241\149\71", "\185\142\221\152\227\34")),[IVAN("\95\214\120\236\70\33\229\81\193\82\202\81\54\241\93\215\117\245\71\42\214\81\200", "\151\56\165\55\154\35\83")]=TABLE_TableIndirection[IVAN("\149\74\55\235\166\70\23\235\174\64\0\171\240", "\142\192\35\101")](IVAN("\230\121\40\186\226\158\191", "\118\182\21\73\195\135\236\204"), IVAN("\41\56\16\85\23\25\240\13\50\14\83", "\157\104\92\122\32\100\109"), IVAN("\140\176\202\216\47\46\137\174\227\182\221\207\59\34\159\235\161\169\203\211\125\38\132\166", "\203\195\198\175\170\93\71\237")),[IVAN("\41\88\17\195\84\3\238\39\79\59\230\80\23\249\30\68\55\219\69", "\156\78\43\94\181\49\113")]=TABLE_TableIndirection[IVAN("\71\225\246\166\13\70\107\119\230\199\166\78\19", "\25\18\136\164\195\107\35")](IVAN("\216\33\168\86\119\174\210", "\216\136\77\201\47\18\220\161"), IVAN("\12\232\33\207\27\200\143\40\226\63\201", "\226\77\140\75\186\104\188"), IVAN("\150\216\213\45\93\176\202\213\127\92\184\200\213\127\95\182\199\222\43", "\47\217\174\176\95")),[IVAN("\191\206\87\18\162\88\97\18\183\252\122\14", "\70\216\189\22\98\210\52\24")]=TABLE_TableIndirection[IVAN("\239\214\145\130\213\223\205\166\137\208\223\154\243", "\179\186\191\195\231")](IVAN("\201\51\25\253\252\45\11", "\132\153\95\120"), IVAN("\144\182\4\56\228\206\173\180\188\26\62", "\192\209\210\110\77\151\186"), IVAN("\193\19\50\229\230\132\244\12\98\232\243\200", "\164\128\99\66\137\159"))}};
-for _, propName in ipairs(TABLE_TableIndirection[IVAN("\50\140\239\144\1\132\236\173\69\217", "\222\96\233\137")]) do
-	TABLE_TableIndirection[IVAN("\171\182\161\90\216", "\144\217\211\199\127\232\147")] = TABLE_TableIndirection[IVAN("\205\38\12\45\211\64\16\65\246\44\59\109\133", "\36\152\79\94\72\181\37\98")](IVAN("\231\212\70\38\210\202\84", "\95\183\184\39"), IVAN("\148\59\237\51\71\148\15\176\49\243\53", "\98\213\95\135\70\52\224"), propName);
-	if (TABLE_TableIndirection[IVAN("\236\166\207\50\4", "\52\158\195\169\23")] or (1180 == 2180)) then
-		TABLE_TableIndirection[IVAN("\79\181\1\113\146\3\114\152\115\190\62\113\195\101", "\235\26\220\82\20\230\85\27")](TABLE_TableIndirection[IVAN("\154\164\239\135\36", "\20\232\193\137\162")], false);
-	end
+
+local RefNames = {
+    "Add to whitelist",
+    "Allow shared ESP updates",
+    "Disable visuals",
+    "High priority",
+    "Force pitch",
+    "Force body yaw",
+    "Correction active",
+    "Override prefer body aim",
+    "Override safe point",
+    "Apply to all"
+}
+
+local RbfxRefs = {
+    dt = { UiReference("RAGE", "Aimbot", "Double tap") },
+    hideShots = { UiReference("AA", "Other", "On shot anti-aim") },
+    aimbot = UiReference("RAGE", "Aimbot", "Enabled"),
+    correction = UiReference("RAGE", "Other", "Anti-aim correction")
+}
+
+local GameSensePList = {
+    adjustments = {
+        gsAddToWhitelist = UiReference("Players", "Adjustments", "Add to whitelist"),
+        gsAllowSharedEsp = UiReference("Players", "Adjustments", "Allow shared ESP updates"),
+        gsDisableVisuals = UiReference("Players", "Adjustments", "Disable visuals"),
+        gsHighPriority = UiReference("Players", "Adjustments", "High priority"),
+        gsForcePitch = UiReference("Players", "Adjustments", "Force pitch"),
+        gsForceBodyYaw = UiReference("Players", "Adjustments", "Force body yaw"),
+        gsCorrectionActive = UiReference("Players", "Adjustments", "Correction active"),
+        gsOverridePreferBodyAim = UiReference("Players", "Adjustments", "Override prefer body aim"),
+        gsOverrideSafePoint = UiReference("Players", "Adjustments", "Override safe point"),
+        gsApplyToAll = UiReference("Players", "Adjustments", "Apply to all"),
+    }
+}
+
+for _, propName in ipairs(RefNames) do
+    local ref = UiReference("Players", "Adjustments", propName)
+    if ref then
+        UiSetVisible(ref, false)
+    end
 end
-TABLE_TableIndirection[IVAN("\36\208\215\165\226\174\24\117\59\230\196\177\209\141\27\100\39\237\192\160\162\220", "\17\66\191\165\198\135\236\119")] = TABLE_TableIndirection[IVAN("\58\166\156\22\249\237\254\212\1\172\171\86\175", "\177\111\207\206\115\159\136\140")](IVAN("\53\133\17\13\209\93\76", "\63\101\233\112\116\180\47"), IVAN("\226\63\231\7\235\34\206\62\227\6\235", "\86\163\91\141\114\152"), IVAN("\117\4\102\112\63\19\9\123\119\35\19\18\117\100\122\69\10\120\102\63", "\90\51\107\20\19"));
-if TABLE_TableIndirection[IVAN("\139\255\151\236\56\175\255\129\246\4\140\231\179\238\49\152\245\183\234\59\200\160", "\93\237\144\229\143")] then
-	TABLE_TableIndirection[IVAN("\32\255\195\28\31\112\28\229\249\27\7\67\80\166", "\38\117\150\144\121\107")](TABLE_TableIndirection[IVAN("\43\180\252\57\40\153\225\62\52\130\239\45\27\186\226\47\40\137\235\60\104\235", "\90\77\219\142")], false);
+
+local forceBodyYawValueRef = UiReference("Players", "Adjustments", "Force body yaw value")
+if forceBodyYawValueRef then
+    UiSetVisible(forceBodyYawValueRef, false)
 end
+
 local function HasOption(multiselectRef, keyword)
-	TABLE_TableIndirection[IVAN("\234\13\50\45\9\87", "\26\134\100\65\89\44\103")] = TABLE_TableIndirection[IVAN("\196\234\23\38\176\180\179", "\196\145\131\80\67")](multiselectRef);
-	if not TABLE_TableIndirection[IVAN("\18\185\21\28\93\184", "\136\126\208\102\104\120")] then
-		return false;
-	end
-	for _, item in ipairs(TABLE_TableIndirection[IVAN("\116\131\221\87\234\2", "\49\24\234\174\35\207\50\93")]) do
-		if ((4090 < 4653) and item:find(keyword, 1, true)) then
-			return true;
-		end
-	end
-	return false;
+    local list = UiGet(multiselectRef)
+    if not list then
+        return false
+    end
+    for _, item in ipairs(list) do
+        if item:find(keyword, 1, true) then
+            return true
+        end
+    end
+    return false
 end
-TABLE_TableIndirection[IVAN("\62\247\254\128\112\30\245\248\188\120\1\247\239\205\33", "\17\108\146\157\232")] = TABLE_TableIndirection[IVAN("\108\207\27\239\46\164\88\247\29\238\36\139\68\214\26\249\106\248", "\200\43\163\116\141\79")]();
-TABLE_TableIndirection[IVAN("\140\53\47\138\160\224\207\186\55\54\176\164\251\243\250\102", "\131\223\86\93\227\208\148")] = 14;
-TABLE_TableIndirection[IVAN("\192\74\164\164\24\182\247\76\185\184\62\180\224\77\179\243\77", "\213\131\37\214\214\125")] = nil;
-TABLE_TableIndirection[IVAN("\8\46\49\250\177", "\129\70\75\69\223")] = {[IVAN("\64\199\242\238\111", "\143\38\171\147\137\28")]=260,[IVAN("\195\135\168\230\6\237\215\213", "\180\176\226\217\147\99\131")]=10412,[IVAN("\208\160\44\11\214", "\103\179\217\79")]=10408,[IVAN("\90\187\29\204\67\141\160\65\133\29\193\68", "\195\42\215\124\181\33\236")]=10416,[IVAN("\30\92\38\13\49\249\31\77\3\55\40\253", "\152\109\57\87\94\69")]=10420,[IVAN("\234\210\27\182\187\220\87\173\223\222\4\170\173\218\81\172", "\200\153\183\106\195\222\178\52")]=10424};
+
+local RechargeTimer = GlobalsTickCount()
+local ScriptLeakStop = 14
+local CorrectionCache = nil
+
+local Net = {
+    flags = 260,
+    sequence = 10412,
+    cycle = 10408,
+    playbackRate = 10416,
+    seqStartTime = 10420,
+    sequenceFinished = 10424
+}
+
 local function SyncAnim(entPtr)
-	mem.write(entPtr + TABLE_TableIndirection[IVAN("\28\230\156\120\25", "\58\82\131\232\93\41")].sequence, 0, IVAN("\138\89\196", "\95\227\55\176\117\61"));
-	mem.write(entPtr + TABLE_TableIndirection[IVAN("\54\123\55\14\251", "\203\120\30\67\43")].cycle, 0, IVAN("\247\41\66\238\205", "\185\145\69\45\143"));
-	mem.write(entPtr + TABLE_TableIndirection[IVAN("\164\26\13\227\140", "\188\234\127\121\198")].playbackRate, 1, IVAN("\62\62\28\130\44", "\227\88\82\115"));
-	mem.write(entPtr + TABLE_TableIndirection[IVAN("\109\26\174\226\82", "\19\35\127\218\199\98")].seqStartTime, 0, IVAN("\26\247\5\227\8", "\130\124\155\106"));
-	mem.write(entPtr + TABLE_TableIndirection[IVAN("\251\206\226\234\243", "\223\181\171\150\207\195\150\28")].sequenceFinished, false, IVAN("\78\53\236\162", "\105\44\90\131\206"));
+    mem.write(entPtr + Net.sequence, 0, "int")
+    mem.write(entPtr + Net.cycle, 0, "float")
+    mem.write(entPtr + Net.playbackRate, 1, "float")
+    mem.write(entPtr + Net.seqStartTime, 0, "float")
+    mem.write(entPtr + Net.sequenceFinished, false, "bool")
 end
-TABLE_TableIndirection[IVAN("\202\233\151\181\13\51\250\238\166\170\77\110", "\94\159\128\210\217\104")] = {};
-TABLE_TableIndirection[IVAN("\101\240\35\179\90\114\252\116\68\234\67\239", "\26\48\153\102\223\63\31\153")].enabled = TABLE_TableIndirection[IVAN("\55\73\195\246\21\99\229\246\1\75\239\252\26\5\189", "\147\98\32\141")](IVAN("\40\79\226\211\3\68\88", "\43\120\35\131\170\102\54"), IVAN("\117\2\141\163\182\164\137\81\8\147\165", "\228\52\102\231\214\197\208"), "\a" .. TABLE_TableIndirection[IVAN("\63\227\118\207\228\159\49\211\6\165\37", "\182\126\128\21\170\138\235\121")] .. "$ Assembly \aFFFFFFFF" .. Build);
-TABLE_TableIndirection[IVAN("\190\211\16\234\131\30\53\8\159\201\112\182", "\102\235\186\85\134\230\115\80")].divider2 = TABLE_TableIndirection[IVAN("\98\5\16\90\101\248\35\85\9\50\26\34", "\66\55\108\94\63\18\180")](IVAN("\36\129\132\46\34\75\7", "\57\116\237\229\87\71"), IVAN("\139\181\231\242\100\250\74\175\191\249\244", "\39\202\209\141\135\23\142"), "\a37373750‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾");
-TABLE_TableIndirection[IVAN("\202\58\44\6\55\245\250\61\29\25\119\168", "\152\159\83\105\106\82")].correction = TABLE_TableIndirection[IVAN("\180\207\127\247\222\113\148\202\69\251\218\89\141\195\82\230\140\12", "\60\225\166\49\146\169")](IVAN("\31\18\46\51\4\21\60", "\103\79\126\79\74\97"), IVAN("\155\123\217\102\77\14\183\122\221\103\77", "\122\218\31\179\19\62"), "\a" .. TABLE_TableIndirection[IVAN("\146\213\206\196\199\181\109\182\206\136\145", "\37\211\182\173\161\169\193")] .. " \aFFFFFFFFCorrection Types", {("\a" .. TABLE_TableIndirection[IVAN("\214\57\78\220\38\111\145\242\34\8\137", "\217\151\90\45\185\72\27")] .. " \aFFFFFFFFJitter"),("\a" .. TABLE_TableIndirection[IVAN("\226\127\228\23\88\215\84\226\10\19\147", "\54\163\28\135\114")] .. " \aFFFFFFFFDesync"),("\a" .. TABLE_TableIndirection[IVAN("\9\216\94\135\64\107\0\222\69\199\30", "\31\72\187\61\226\46")] .. " \aFFFFFFFFAnimstate"),("\a" .. TABLE_TableIndirection[IVAN("\226\5\64\215\73\106\12\198\30\6\130", "\68\163\102\35\178\39\30")] .. " \aFFFFFFFFDefensive")});
-TABLE_TableIndirection[IVAN("\139\121\255\203\6\184\134\31\170\99\159\151", "\113\222\16\186\167\99\213\227")].labeladfs = TABLE_TableIndirection[IVAN("\27\7\213\243\57\34\250\244\43\2\190\166", "\150\78\110\155")](IVAN("\181\201\38\248\161\12\172", "\32\229\165\71\129\196\126\223"), IVAN("\226\141\206\148\146\193\206\140\202\149\146", "\181\163\233\164\225\225"), "\aFFFFFF00");
-TABLE_TableIndirection[IVAN("\101\130\27\123\85\134\59\121\68\152\123\39", "\23\48\235\94")].advanced = TABLE_TableIndirection[IVAN("\73\211\246\88\64\30\199\112\206\209\78\82\63\215\127\206\157\13", "\178\28\186\184\61\55\83")](IVAN("\244\193\70\37\247\28\230", "\149\164\173\39\92\146\110"), IVAN("\210\35\26\10\9\15\254\34\30\11\9", "\123\147\71\112\127\122"), "\a" .. TABLE_TableIndirection[IVAN("\237\206\129\116\72\216\229\135\105\3\156", "\38\172\173\226\17")] .. " \aFFFFFFFFAdvanced Options", {("\a" .. TABLE_TableIndirection[IVAN("\108\18\47\234\67\5\4\234\85\84\124", "\143\45\113\76")] .. " \aFFFFFFFFScales"),("\a" .. TABLE_TableIndirection[IVAN("\153\187\31\57\182\172\52\57\160\253\76", "\92\216\216\124")] .. " \aFFFFFFFFScanner"),("\a" .. TABLE_TableIndirection[IVAN("\122\49\175\69\243\79\26\169\88\184\11", "\157\59\82\204\32")] .. " \aFFFFFFFFBruteforce")});
-TABLE_TableIndirection[IVAN("\13\55\198\246\236\231\214\191\44\45\166\170", "\209\88\94\131\154\137\138\179")].labeladf = TABLE_TableIndirection[IVAN("\29\168\234\121\9\15\48\32\45\173\129\44", "\66\72\193\164\28\126\67\81")](IVAN("\215\32\169\65\35\100\244", "\22\135\76\200\56\70"), IVAN("\172\52\242\49\78\245\128\53\246\48\78", "\129\237\80\152\68\61"), "\aFFFFFF00");
-TABLE_TableIndirection[IVAN("\100\161\33\255\25\26\93\95\188\23\182\76", "\56\49\200\100\147\124\119")].divider2d3 = TABLE_TableIndirection[IVAN("\249\55\145\245\219\18\190\242\201\50\250\160", "\144\172\94\223")](IVAN("\20\3\163\94\33\29\177", "\39\68\111\194"), IVAN("\247\162\237\210\106\163\219\163\233\211\106", "\215\182\198\135\167\25"), "\a37373750‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾");
-TABLE_TableIndirection[IVAN("\184\64\207\68\136\68\239\70\153\90\175\24", "\40\237\41\138")].rageFix = TABLE_TableIndirection[IVAN("\242\125\212\253\93\228\124\255\251\65\197\123\226\189\26", "\42\167\20\154\152")](IVAN("\122\242\163\91\116\51\89", "\65\42\158\194\34\17"), IVAN("\59\35\88\25\62\249\22\235\20\51\65", "\142\122\71\50\108\77\141\123"), "\a" .. TABLE_TableIndirection[IVAN("\52\161\252\29\53\1\138\250\0\126\69", "\91\117\194\159\120")] .. "</>  \aFFFFFFFFRagebot Fix");
-TABLE_TableIndirection[IVAN("\47\20\27\20\48\252\33\20\9\45\93\101", "\68\122\125\94\120\85\145")].animSync = TABLE_TableIndirection[IVAN("\34\21\225\91\223\250\178\18\31\196\92\199\193\255\71", "\218\119\124\175\62\168\185")](IVAN("\149\252\73\221\160\226\91", "\164\197\144\40"), IVAN("\162\244\160\158\206\162\142\245\164\159\206", "\214\227\144\202\235\189"), "\a" .. TABLE_TableIndirection[IVAN("\204\166\132\126\30\167\123\57\245\224\215", "\92\141\197\231\27\112\211\51")] .. "⇄ \aFFFFFFFFAnimation Sync");
-TABLE_TableIndirection[IVAN("\211\246\175\175\212\235\250\132\183\194\163\175", "\177\134\159\234\195")].hitRate = TABLE_TableIndirection[IVAN("\136\226\17\165\222\158\227\58\163\194\191\228\39\229\153", "\169\221\139\95\192")](IVAN("\238\135\126\38\39\52\205", "\70\190\235\31\95\66"), IVAN("\155\230\16\243\246\174\239\31\232\241\169", "\133\218\130\122\134"), IVAN("\121\191\203\205\200\177\57\40\250\163\242\213\176\45\61\243\234\222\221\183\49\51\241", "\88\92\159\131\164\188\195"));
-TABLE_TableIndirection[IVAN("\181\39\154\71\210\230\216\142\58\172\14\135", "\189\224\78\223\43\183\139")].trashTalk = TABLE_TableIndirection[IVAN("\27\245\164\19\214\13\244\143\21\202\44\243\146\83\145", "\161\78\156\234\118")](IVAN("\151\187\200\197\162\165\218", "\188\199\215\169"), IVAN("\221\13\85\110\251\232\4\90\117\252\239", "\136\156\105\63\27"), "\a" .. TABLE_TableIndirection[IVAN("\58\143\122\49\21\152\81\49\3\201\41", "\84\123\236\25")] .. "  \aFFFFFFFFKill Say");
-TABLE_TableIndirection[IVAN("\197\130\143\27\169\184\245\133\190\4\233\229", "\213\144\235\202\119\204")].kirkMode = TABLE_TableIndirection[IVAN("\22\17\240\47\63\0\69\38\27\213\40\39\59\8\115", "\45\67\120\190\74\72\67")](IVAN("\16\46\236\188\252\154\253", "\137\64\66\141\197\153\232\142"), IVAN("\34\212\40\179\155\23\221\39\168\156\16", "\232\99\176\66\198"), IVAN("\199\97\104\45\114\159\242\108\193\46\44\3", "\76\140\65\72\102\27\237\153"));
-TABLE_TableIndirection[IVAN("\127\211\51\222\210\12\187\68\206\5\151\135", "\222\42\186\118\178\183\97")].clanTag = TABLE_TableIndirection[IVAN("\104\229\106\143\74\207\76\143\94\231\70\133\69\169\20", "\234\61\140\36")](IVAN("\17\209\187\107\10\51\206", "\111\65\189\218\18"), IVAN("\98\79\17\32\24\72\162\70\69\15\38", "\207\35\43\123\85\107\60"), " Clan Tag");
-TABLE_TableIndirection[IVAN("\69\163\133\230\124\125\175\174\254\106\53\250", "\25\16\202\192\138")].hitMarker = TABLE_TableIndirection[IVAN("\200\194\131\231\190\215\245\206\174\233\171\251\229\142\253", "\148\157\171\205\130\201")](IVAN("\19\216\117\48\212\228\48", "\150\67\180\20\73\177"), IVAN("\172\28\16\88\158\12\23\72\131\12\9", "\45\237\120\122"), "⊹ Hitmarker");
-TABLE_TableIndirection[IVAN("\226\225\135\32\210\229\167\34\195\251\231\124", "\76\183\136\194")].labeladf2 = TABLE_TableIndirection[IVAN("\79\239\203\61\71\99\21\120\227\233\125\0", "\116\26\134\133\88\48\47")](IVAN("\46\205\161\253\184\96\13", "\18\126\161\192\132\221"), IVAN("\126\44\164\17\69\75\37\171\10\66\76", "\54\63\72\206\100"), "\aFFFFFF00");
-TABLE_TableIndirection[IVAN("\253\80\96\118\224\118\205\87\81\105\160\43", "\27\168\57\37\26\133")].divider23 = TABLE_TableIndirection[IVAN("\24\163\82\173\192\1\171\126\173\219\104\250", "\183\77\202\28\200")](IVAN("\39\63\136\17\18\33\154", "\104\119\83\233"), IVAN("\212\252\45\55\80\225\245\34\44\87\230", "\35\149\152\71\66"), "\a37373750‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾");
-TABLE_TableIndirection[IVAN("\44\225\103\188\63\20\237\76\164\41\92\184", "\90\121\136\34\208")].footerLabel = TABLE_TableIndirection[IVAN("\242\7\123\27\208\34\84\28\194\2\16\78", "\126\167\110\53")](IVAN("\13\28\47\225\217\45\46", "\95\93\112\78\152\188"), IVAN("\224\241\143\0\247\170\223\196\251\145\6", "\178\161\149\229\117\132\222"), "\aFFFFFF15  ₊✩‧₊˚౨ৎ˚₊✩‧₊ @assemblygs ₊✩‧₊˚౨ৎ˚₊˚⟡˖…");
+
+local UiElements = {}
+UiElements.enabled = UiNewCheckbox("Players", "Adjustments", "\a" .. AccentHex .. "$ Assembly \aFFFFFFFF" .. Build)
+UiElements.divider2 = UiNewLabel("Players", "Adjustments", "\a37373750‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾")
+
+UiElements.correction = UiNewMultiselect(
+    "Players",
+    "Adjustments",
+    "\a" .. AccentHex .. " \aFFFFFFFFCorrection Types",
+    {
+        "\a" .. AccentHex .. " \aFFFFFFFFJitter",
+        "\a" .. AccentHex .. " \aFFFFFFFFDesync",
+        "\a" .. AccentHex .. " \aFFFFFFFFAnimstate",
+        "\a" .. AccentHex .. " \aFFFFFFFFDefensive"
+    }
+)
+UiElements.labeladfs = UiNewLabel("Players", "Adjustments", "\aFFFFFF00")
+UiElements.advanced = UiNewMultiselect(
+    "Players",
+    "Adjustments",
+    "\a" .. AccentHex .. " \aFFFFFFFFAdvanced Options",
+    {
+        "\a" .. AccentHex .. " \aFFFFFFFFScales",
+        "\a" .. AccentHex .. " \aFFFFFFFFScanner",
+        "\a" .. AccentHex .. " \aFFFFFFFFBruteforce"
+    }
+)
+UiElements.labeladf = UiNewLabel("Players", "Adjustments", "\aFFFFFF00")
+
+UiElements.divider2d3 = UiNewLabel("Players", "Adjustments", "\a37373750‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾")
+
+UiElements.rageFix = UiNewCheckbox("Players", "Adjustments", "\a" .. AccentHex .. "</>  \aFFFFFFFFRagebot Fix")
+UiElements.animSync = UiNewCheckbox("Players", "Adjustments", "\a" .. AccentHex .. "⇄ \aFFFFFFFFAnimation Sync")
+UiElements.hitRate = UiNewCheckbox("Players", "Adjustments", "% Hitrate Visualization")-- UiElements.hitRate = UiNewCheckbox("Players", "Adjustments", "\a" .. AccentHex .. "% \aFFFFFFFFHitrate Visualization")
+UiElements.trashTalk = UiNewCheckbox("Players", "Adjustments", "\a" .. AccentHex .. "  \aFFFFFFFFKill Say")
+UiElements.kirkMode = UiNewCheckbox("Players", "Adjustments", "K  Kirk Mode") 
+UiElements.clanTag = UiNewCheckbox("Players", "Adjustments", " Clan Tag")-- UiElements.clanTag = UiNewCheckbox("Players", "Adjustments", "\a" .. AccentHex .. " \aFFFFFFFFClan Tag")
+UiElements.hitMarker = UiNewCheckbox("Players", "Adjustments", "⊹ Hitmarker")-- UiElements.hitMarker = UiNewCheckbox("Players", "Adjustments", "\a" .. AccentHex .. "⊹ \aFFFFFFFFHitmarker")
+UiElements.labeladf2 = UiNewLabel("Players", "Adjustments", "\aFFFFFF00")
+
+UiElements.divider23 = UiNewLabel("Players", "Adjustments", "\a37373750‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾")
+UiElements.footerLabel = UiNewLabel("Players", "Adjustments", "\aFFFFFF15  ₊✩‧₊˚౨ৎ˚₊✩‧₊ @assemblygs ₊✩‧₊˚౨ৎ˚₊˚⟡˖…")
+
 local function UpdateVisibility()
-	TABLE_TableIndirection[IVAN("\141\213\220\174\173\19\162\102\216", "\67\232\187\189\204\193\118\198")] = TABLE_TableIndirection[IVAN("\190\39\146\37\47\71\191", "\143\235\78\213\64\91\98")](TABLE_TableIndirection[IVAN("\184\65\161\229\117\187\136\70\144\250\53\230", "\214\237\40\228\137\16")].enabled);
-	TABLE_TableIndirection[IVAN("\176\234\220\220\23\144\140\240\230\219\15\163\192\179", "\198\229\131\143\185\99")](TABLE_TableIndirection[IVAN("\100\133\141\127\84\129\173\125\69\159\237\35", "\19\49\236\200")].enabled, true);
-	TABLE_TableIndirection[IVAN("\203\62\197\178\240\140\247\36\255\181\232\191\187\103", "\218\158\87\150\215\132")](TABLE_TableIndirection[IVAN("\206\23\252\238\51\47\200\245\10\202\167\102", "\173\155\126\185\130\86\66")].divider2, TABLE_TableIndirection[IVAN("\224\168\187\197\132\233\225\227\234", "\140\133\198\218\167\232")]);
-	TABLE_TableIndirection[IVAN("\128\39\135\120\144\131\39\167\116\134\185\43\241\45", "\228\213\78\212\29")](TABLE_TableIndirection[IVAN("\178\69\147\9\238\138\73\184\17\248\194\28", "\139\231\44\214\101")].divider23, TABLE_TableIndirection[IVAN("\220\225\7\92\28\180\53\83\137", "\118\185\143\102\62\112\209\81")]);
-	TABLE_TableIndirection[IVAN("\105\121\26\227\177\35\21\43\85\114\37\227\224\69", "\88\60\16\73\134\197\117\124")](TABLE_TableIndirection[IVAN("\101\227\221\196\68\93\239\246\220\82\21\186", "\33\48\138\152\168")].divider2d3, TABLE_TableIndirection[IVAN("\119\24\49\83\205\50\118\83\96", "\87\18\118\80\49\161")]);
-	TABLE_TableIndirection[IVAN("\121\23\233\165\164\122\23\201\169\178\64\27\159\240", "\208\44\126\186\192")](TABLE_TableIndirection[IVAN("\194\19\129\202\17\241\204\64\227\9\225\150", "\46\151\122\196\166\116\156\169")].labeladf, TABLE_TableIndirection[IVAN("\224\227\71\24\247\224\233\3\74", "\155\133\141\38\122")]);
-	TABLE_TableIndirection[IVAN("\16\35\159\68\91\73\172\54\35\174\77\74\58\245", "\197\69\74\204\33\47\31")](TABLE_TableIndirection[IVAN("\197\70\127\139\245\66\95\137\228\92\31\215", "\231\144\47\58")].labeladfs, TABLE_TableIndirection[IVAN("\183\214\219\119\20\56\203\124\226", "\89\210\184\186\21\120\93\175")]);
-	TABLE_TableIndirection[IVAN("\132\90\79\208\109\12\184\64\117\215\117\63\244\3", "\90\209\51\28\181\25")](TABLE_TableIndirection[IVAN("\229\114\114\226\186\221\126\89\250\172\149\43", "\223\176\27\55\142")].hitRate, TABLE_TableIndirection[IVAN("\33\181\207\183\40\190\202\240\116", "\213\68\219\174")]);
-	TABLE_TableIndirection[IVAN("\62\233\16\226\62\243\54\108\2\226\47\226\111\149", "\31\107\128\67\135\74\165\95")](TABLE_TableIndirection[IVAN("\237\225\217\65\68\188\221\230\232\94\4\225", "\209\184\136\156\45\33")].clanTag, TABLE_TableIndirection[IVAN("\2\198\116\10\180\2\204\48\88", "\216\103\168\21\104")]);
-	TABLE_TableIndirection[IVAN("\77\164\112\161\108\155\74\183\113\175\79\161\61\253", "\196\24\205\35")](TABLE_TableIndirection[IVAN("\27\130\198\10\43\134\230\8\58\152\166\86", "\102\78\235\131")].correction, TABLE_TableIndirection[IVAN("\255\32\53\70\75\60\179\113\170", "\84\154\78\84\36\39\89\215")]);
-	TABLE_TableIndirection[IVAN("\200\232\101\93\17\203\232\69\81\7\241\228\19\8", "\101\157\129\54\56")](TABLE_TableIndirection[IVAN("\40\160\175\167\38\116\24\167\158\184\102\41", "\25\125\201\234\203\67")].advanced, TABLE_TableIndirection[IVAN("\124\250\25\1\24\34\23\60\164", "\115\25\148\120\99\116\71")]);
-	TABLE_TableIndirection[IVAN("\57\52\138\33\85\58\52\170\45\67\0\56\252\116", "\33\108\93\217\68")](TABLE_TableIndirection[IVAN("\238\66\132\161\222\70\164\163\207\88\228\253", "\205\187\43\193")].trashTalk, TABLE_TableIndirection[IVAN("\251\124\4\221\242\119\1\154\174", "\191\158\18\101")]);
-	TABLE_TableIndirection[IVAN("\240\202\180\178\187\243\202\148\190\173\201\198\194\231", "\207\165\163\231\215")](TABLE_TableIndirection[IVAN("\243\240\220\90\33\125\195\247\237\69\97\32", "\16\166\153\153\54\68")].hitMarker, TABLE_TableIndirection[IVAN("\215\189\193\68\56\36\253\151\227", "\153\178\211\160\38\84\65")]);
-	TABLE_TableIndirection[IVAN("\183\2\105\46\150\61\83\56\139\9\86\46\199\91", "\75\226\107\58")](TABLE_TableIndirection[IVAN("\109\215\52\118\20\207\200\86\202\2\63\65", "\173\56\190\113\26\113\162")].animSync, TABLE_TableIndirection[IVAN("\206\208\44\7\251\206\218\104\85", "\151\171\190\77\101")]);
-	TABLE_TableIndirection[IVAN("\240\38\203\172\236\75\2\214\38\250\165\253\56\91", "\107\165\79\152\201\152\29")](TABLE_TableIndirection[IVAN("\98\71\205\199\81\114\82\64\252\216\17\47", "\31\55\46\136\171\52")].footerLabel, TABLE_TableIndirection[IVAN("\212\38\221\246\221\45\216\177\129", "\148\177\72\188")]);
-	TABLE_TableIndirection[IVAN("\147\191\100\214\178\128\94\192\175\180\91\214\227\230", "\179\198\214\55")](TABLE_TableIndirection[IVAN("\197\5\87\122\64\222\245\2\102\101\0\131", "\179\144\108\18\22\37")].kirkMode, TABLE_TableIndirection[IVAN("\195\173\26\139\195\195\167\94\217", "\175\166\195\123\233")]);
-	TABLE_TableIndirection[IVAN("\218\203\110\76\228\217\203\78\64\242\227\199\24\25", "\144\143\162\61\41")](TABLE_TableIndirection[IVAN("\213\218\56\92\119\138\54\238\199\14\21\34", "\83\128\179\125\48\18\231")].rageFix, TABLE_TableIndirection[IVAN("\88\185\242\223\75\27\89\242\163", "\126\61\215\147\189\39")]);
+    local enabled = UiGet(UiElements.enabled)
+    
+    UiSetVisible(UiElements.enabled, true)
+    UiSetVisible(UiElements.divider2, enabled)
+    UiSetVisible(UiElements.divider23, enabled)
+    UiSetVisible(UiElements.divider2d3, enabled)
+    UiSetVisible(UiElements.labeladf, enabled)
+    UiSetVisible(UiElements.labeladfs, enabled)
+    UiSetVisible(UiElements.hitRate, enabled)
+    UiSetVisible(UiElements.clanTag, enabled)
+    UiSetVisible(UiElements.correction, enabled)
+    UiSetVisible(UiElements.advanced, enabled)
+    UiSetVisible(UiElements.trashTalk, enabled)
+    UiSetVisible(UiElements.hitMarker, enabled)
+    UiSetVisible(UiElements.animSync, enabled)
+    UiSetVisible(UiElements.footerLabel, enabled)
+    UiSetVisible(UiElements.kirkMode, enabled)
+    UiSetVisible(UiElements.rageFix, enabled)
 end
-UpdateVisibility();
-TABLE_TableIndirection[IVAN("\77\246\46\64\108\220\28\73\116\253\28\70\115\186\77", "\37\24\159\125")](TABLE_TableIndirection[IVAN("\239\175\80\78\223\171\112\76\206\181\48\18", "\34\186\198\21")].enabled, UpdateVisibility);
+
+UpdateVisibility()
+UiSetCallback(UiElements.enabled, UpdateVisibility)
+
 local function NormalizeAngle(angle)
-	while angle > 180 do
-		angle = angle - 360;
-	end
-	while angle < -180 do
-		angle = angle + 360;
-	end
-	return angle;
+    while angle > 180 do
+        angle = angle - 360
+    end
+    while angle < -180 do
+        angle = angle + 360
+    end
+    return angle
 end
+
 local function AngleDifference(a, b)
-	return NormalizeAngle(a - b);
+    return NormalizeAngle(a - b)
 end
+
 local function Clamp(value, min, max)
-	if ((value < min) or (2652 < 196)) then
-		return min;
-	end
-	if ((4135 < 4817) and (value > max)) then
-		return max;
-	end
-	return value;
+    if value < min then
+        return min
+    end
+    if value > max then
+        return max
+    end
+    return value
 end
+
 local function GetAbsAngleDifference(a, b)
-	TABLE_TableIndirection[IVAN("\252\1\195\91\135\168", "\162\152\104\165\61")] = math.abs(AngleDifference(a, b));
-	return ((TABLE_TableIndirection[IVAN("\201\38\180\123\53\181", "\133\173\79\210\29\16")] > 180) and (360 - TABLE_TableIndirection[IVAN("\137\117\235\45\200\44", "\75\237\28\141")])) or TABLE_TableIndirection[IVAN("\216\86\202\183\106\75", "\129\188\63\172\209\79\123\135")];
+    local diff = math.abs(AngleDifference(a, b))
+    return diff > 180 and 360 - diff or diff
 end
+
 local function IsDefensivePitch(pitch)
-	return (math.abs(pitch + 180) < 10) or (math.abs(pitch) < 10) or (math.abs(pitch - 180) < 10) or (math.abs(pitch - 89) < 10) or (math.abs(pitch + 89) < 10);
+    return math.abs(pitch + 180) < 10 or math.abs(pitch) < 10 or math.abs(pitch - 180) < 10 or 
+           math.abs(pitch - 89) < 10 or math.abs(pitch + 89) < 10
 end
-TABLE_TableIndirection[IVAN("\100\225\224\200\78\247\239\219\69\192\231\217\65\161\182", "\173\32\132\134")] = {};
+
+local DefensiveData = {}
+
 local function ResolveDefensive(player)
-	if (not player or not entity.is_alive(player)) then
-		return false;
-	end
-	TABLE_TableIndirection[IVAN("\94\23\9\246\171\35\228\74\94\88", "\173\46\123\104\143\206\81")] = entity.get_prop(player, IVAN("\185\34\43\163\75\135\4\172", "\97\212\125\66\234\37\227"));
-	if ((272 == 272) and (TABLE_TableIndirection[IVAN("\154\239\183\44\27\152\202\178\112\78", "\126\234\131\214\85")] <= 0)) then
-		return false;
-	end
-	TABLE_TableIndirection[IVAN("\151\220\68\110\70\137\208\12\10", "\47\228\181\41\58")] = entity.get_prop(player, IVAN("\171\195\223\55\48\57\18\179\240\216\47\10\63\17\146\245\212\62", "\127\198\156\185\91\99\80")) or 0;
-	TABLE_TableIndirection[IVAN("\240\3\201\209\169\12\53\219\230\95\156", "\190\149\122\172\144\199\107\89")] = {entity.get_prop(player, IVAN("\63\58\240\240\249\23\28\244\223\240\53\9\244\237", "\158\82\101\145\158"))};
-	TABLE_TableIndirection[IVAN("\117\231\7\47\69\103\187\82", "\36\16\158\98\118")] = TABLE_TableIndirection[IVAN("\197\15\198\218\86\239\43\224\211\83\147", "\133\160\118\163\155\56\136\71")][2] or 0;
-	TABLE_TableIndirection[IVAN("\250\160\104\183\230", "\213\150\194\17\146\214\127")] = entity.get_prop(player, IVAN("\22\150\162\216\106\171\181\51\9\139\171\208\95\157\163\33\47\168\182\211\67\176", "\86\123\201\196\180\38\196\194")) or 0;
-	TABLE_TableIndirection[IVAN("\241\228\216\168\228\173\137", "\207\151\136\185")] = entity.get_prop(player, IVAN("\165\188\46\164\120\121\118\187", "\17\200\227\72\226\20\24")) or 0;
-	TABLE_TableIndirection[IVAN("\191\79\60\197\198\228\225\251\245\17", "\159\208\33\123\183\169\145\143")] = bit.band(TABLE_TableIndirection[IVAN("\244\86\57\49\225\31\104", "\86\146\58\88")], 1) ~= 0;
-	TABLE_TableIndirection[IVAN("\92\222\254\193\235\185", "\154\56\191\138\160\206\137\86")] = TABLE_TableIndirection[IVAN("\162\92\243\130\114\41\136\218\131\125\244\147\125\127\209", "\172\230\57\149\231\28\90\225")][TABLE_TableIndirection[IVAN("\18\166\135\203\45\201\43\174\195\130", "\187\98\202\230\178\72")]] or {[IVAN("\9\232\183\36\69\51\248", "\42\65\129\196\80")]={},[IVAN("\46\75\78\206\36\14\15\251\14\75\73\211\24\9\54\231\15\79", "\142\98\42\61\186\119\103\98")]=0,[IVAN("\20\190\17\28\14\190\14\1\60\140\11\5\45\179\3\28\49\176\12\60\49\178\7", "\104\88\223\98")]=0,[IVAN("\109\228\206\193\1\230\65\243", "\141\36\151\130\174\98")]=false,[IVAN("\168\117\193\6\183\110\195\31\144\78\203\14\143", "\109\228\26\162")]=0,[IVAN("\108\224\238\119\236\240\91\225\217\125\243\255\80\230", "\134\62\133\157\24\128")]=0,[IVAN("\53\160\9\214\35\167\211\3\149\19\205\44\185", "\182\103\197\122\185\79\209")]=0,[IVAN("\197\134\237\126\4\124\250\132\234\84\15\93\253\147", "\40\147\231\129\23\96")]=0};
-	TABLE_TableIndirection[IVAN("\81\253\138\64\181\191\213\99\253\168\68\175\173\153\37", "\188\21\152\236\37\219\204")][TABLE_TableIndirection[IVAN("\80\229\54\21\69\251\30\8\5\185", "\108\32\137\87")]] = TABLE_TableIndirection[IVAN("\174\233\20\167\106\169", "\57\202\136\96\198\79\153\43")];
-	if ((100 <= 3123) and (TABLE_TableIndirection[IVAN("\184\42\167\147\132\170\253\238\115", "\152\203\67\202\199\237\199")] <= 0.1)) then
-		TABLE_TableIndirection[IVAN("\254\66\180\14\90\37", "\134\154\35\192\111\127\21\25")].History = {};
-		TABLE_TableIndirection[IVAN("\188\39\29\11\101\130", "\178\216\70\105\106\64")].IsLocked = false;
-		TABLE_TableIndirection[IVAN("\59\42\110\247\140\133", "\224\95\75\26\150\169\181\180")].ResolvedDesync = 0;
-		return false;
-	end
-	TABLE_TableIndirection[IVAN("\2\201\250\58\65\173\125\2\212\223\109\20", "\22\107\186\184\72\36\204")] = false;
-	if (TABLE_TableIndirection[IVAN("\232\179\3\92\1\242\179\32\11\94", "\110\135\221\68\46")] or (1369 > 4987)) then
-		TABLE_TableIndirection[IVAN("\250\55\27\207\199\181\61\166\102", "\91\131\86\108\139\174\211")] = GetAbsAngleDifference(TABLE_TableIndirection[IVAN("\254\50\189\46\92\236\110\232", "\61\155\75\216\119")], TABLE_TableIndirection[IVAN("\8\169\171\121\8", "\189\100\203\210\92\56\105")]);
-		TABLE_TableIndirection[IVAN("\38\66\223\58\42\80\246\33\33\86\184\120", "\72\79\49\157")] = (TABLE_TableIndirection[IVAN("\145\177\38\152\129\182\55\249\216", "\220\232\208\81")] > 35) and (TABLE_TableIndirection[IVAN("\236\191\242\20\37\92\167\176\238", "\193\149\222\133\80\76\58")] < 145);
-	end
-	TABLE_TableIndirection[IVAN("\194\88\67\198\199\105\70\223\195\24\31", "\178\166\61\47")] = TABLE_TableIndirection[IVAN("\232\67\229\78\195\51\254\15\184", "\94\155\42\136\26\170")] - TABLE_TableIndirection[IVAN("\128\62\50\180\193\111", "\213\228\95\70")].LastSimulationTime;
-	TABLE_TableIndirection[IVAN("\62\178\193\143\94\36\175\199\150\97\43\183\135\212", "\23\74\219\162\228")] = globals.tickinterval();
-	TABLE_TableIndirection[IVAN("\48\245\112\174\55\48\226\114\166\56\50\163\22", "\91\89\134\38\207")] = (TABLE_TableIndirection[IVAN("\64\235\196\34\18\228\46\73\235\141\102", "\71\36\142\168\86\115\176")] > 0) and (math.abs(TABLE_TableIndirection[IVAN("\219\164\126\171\2\138\95\68\218\228\34", "\41\191\193\18\223\99\222\54")] - TABLE_TableIndirection[IVAN("\191\47\196\33\131\165\50\194\56\188\170\42\130\122", "\202\203\70\167\74")]) < 0.001);
-	TABLE_TableIndirection[IVAN("\40\0\200\50\52\124", "\17\76\97\188\83")].LastSimulationTime = TABLE_TableIndirection[IVAN("\150\46\212\3\57\142\78\230\213", "\195\229\71\185\87\80\227\43")];
-	if TABLE_TableIndirection[IVAN("\233\239\54\81\227\233\248\52\89\236\235\185\80", "\143\128\156\96\48")] then
-		TABLE_TableIndirection[IVAN("\188\208\228\19\82\232", "\119\216\177\144\114")].LastValidSimulationTime = TABLE_TableIndirection[IVAN("\218\32\244\118\192\36\252\7\153", "\34\169\73\153")];
-		TABLE_TableIndirection[IVAN("\174\237\31\138\239\188", "\235\202\140\107")].ValidTickCount = TABLE_TableIndirection[IVAN("\8\117\32\169\172\119", "\165\108\20\84\200\137\71\151")].ValidTickCount + 1;
-		table.insert(TABLE_TableIndirection[IVAN("\126\181\63\137\63\228", "\232\26\212\75")].History, {[IVAN("\4\64\127\220\254\58\76", "\151\87\41\18\136")]=TABLE_TableIndirection[IVAN("\72\166\199\228\247\86\170\143\128", "\158\59\207\170\176")],[IVAN("\106\71\54\112\141\88", "\236\47\62\83\41")]=TABLE_TableIndirection[IVAN("\255\176\37\2\171\149\191\249", "\226\154\201\64\91\202")],[IVAN("\237\75\4", "\220\161\41\125\120\42")]=TABLE_TableIndirection[IVAN("\176\115\185\75\236", "\110\220\17\192")],[IVAN("\86\107\49\27\224\62\255\160", "\199\20\25\84\122\139\87\145")]=TABLE_TableIndirection[IVAN("\78\26\255\188\30\235\76\0\211\169\94\186", "\138\39\105\189\206\123")],[IVAN("\48\9\174\63\252\236\193\251", "\159\127\103\233\77\147\153\175")]=TABLE_TableIndirection[IVAN("\8\254\195\184\79\222\9\244\161\250", "\171\103\144\132\202\32")],[IVAN("\32\38\253\15\24", "\108\112\79\137")]=(TABLE_TableIndirection[IVAN("\58\219\113\9\163\6\229\48\44\135\36", "\85\95\162\20\72\205\97\137")][1] or 0)});
-		if (#TABLE_TableIndirection[IVAN("\243\252\62\221\72\168", "\173\151\157\74\188\109\152")].History <= 64) then
-		else
-			table.remove(TABLE_TableIndirection[IVAN("\32\9\44\220\153\4", "\147\68\104\88\189\188\52\181")].History, 1);
-		end
-	end
-	if (((#TABLE_TableIndirection[IVAN("\30\137\159\209\95\216", "\176\122\232\235")].History >= 8) and not TABLE_TableIndirection[IVAN("\132\116\46\78\171\208", "\142\224\21\90\47")].IsLocked) or (863 >= 4584)) then
-		for i = #TABLE_TableIndirection[IVAN("\112\213\51\87\225\219", "\229\20\180\71\54\196\235")].History - 2, 1, -1 do
-			if ((i + 2) <= #TABLE_TableIndirection[IVAN("\45\127\213\226\176\250", "\224\73\30\161\131\149\202")].History) then
-			else
-				break;
-			end
-			TABLE_TableIndirection[IVAN("\227\180\180\0", "\48\145\133\145")] = TABLE_TableIndirection[IVAN("\94\77\161\239\148\124", "\76\58\44\213\142\177")].History[i];
-			TABLE_TableIndirection[IVAN("\217\118\87\125", "\24\171\68\114\77")] = TABLE_TableIndirection[IVAN("\235\28\68\83\194\142", "\205\143\125\48\50\231\190\100")].History[i + 1];
-			TABLE_TableIndirection[IVAN("\211\244\81\85", "\194\161\199\116\101\129\131\191")] = TABLE_TableIndirection[IVAN("\232\37\220\169\178\242", "\194\140\68\168\200\151")].History[i + 2];
-			if (TABLE_TableIndirection[IVAN("\80\170\144\117", "\149\34\155\181\69")].Breaking and not TABLE_TableIndirection[IVAN("\17\175\144\170", "\154\99\157\181")].Breaking and TABLE_TableIndirection[IVAN("\159\92\169\240", "\140\237\111\140\192")].Breaking) then
-				TABLE_TableIndirection[IVAN("\2\16\123\30\87\92\45", "\120\102\121\29")] = TABLE_TableIndirection[IVAN("\190\177\252\107", "\91\204\131\217")].SimTime - TABLE_TableIndirection[IVAN("\220\174\16\132", "\158\174\159\53\180\211\189")].SimTime;
-				TABLE_TableIndirection[IVAN("\86\244\235\219\37\240\2", "\213\50\157\141\189\23")] = TABLE_TableIndirection[IVAN("\236\117\193\240", "\196\158\70\228\192\18")].SimTime - TABLE_TableIndirection[IVAN("\88\13\84\30", "\185\42\63\113\46")].SimTime;
-				if (((TABLE_TableIndirection[IVAN("\208\212\39\63\74\145\141", "\123\180\189\65\89")] > 0) and (TABLE_TableIndirection[IVAN("\198\133\246\226\219\135\220", "\233\162\236\144\132")] > 0) and (TABLE_TableIndirection[IVAN("\182\205\248\28\232\179\15", "\63\210\164\158\122\217\150")] < 0.5) and (TABLE_TableIndirection[IVAN("\55\194\240\234\27\189\99", "\152\83\171\150\140\41")] < 0.5)) or (724 >= 1668)) then
-					TABLE_TableIndirection[IVAN("\134\228\151\50\145\75", "\104\226\133\227\83\180\123")].IsLocked = true;
-					TABLE_TableIndirection[IVAN("\7\10\55\81\70\91", "\48\99\107\67")].LockStartTick = globals.tickcount();
-					TABLE_TableIndirection[IVAN("\218\167\105\209\104\43", "\27\190\198\29\176\77")].ResolvedDesync = AngleDifference(TABLE_TableIndirection[IVAN("\253\25\184\100", "\46\143\43\157\84\201")].Lby, TABLE_TableIndirection[IVAN("\69\42\19\146", "\168\55\24\54\162\63\115")].EyeYaw);
-					TABLE_TableIndirection[IVAN("\19\251\52\129\151\158", "\174\119\154\64\224\178")].ResolvedPitch = TABLE_TableIndirection[IVAN("\56\44\128\43", "\132\74\30\165\27\101\199\122")].Pitch;
-					break;
-				end
-			end
-		end
-	end
-	if ((428 < 1804) and TABLE_TableIndirection[IVAN("\43\230\235\166\226\229", "\212\79\135\159\199\199\213")].IsLocked) then
-		TABLE_TableIndirection[IVAN("\109\169\182\76\79\251\23\122\171\176\67\25\135", "\120\25\192\213\39\60\183")] = globals.tickcount() - TABLE_TableIndirection[IVAN("\28\65\43\73\93\16", "\40\120\32\95")].LockStartTick;
-		if ((TABLE_TableIndirection[IVAN("\46\162\58\113\188\51\53\168\50\127\171\90\106", "\127\90\203\89\26\207")] > 256) or (TABLE_TableIndirection[IVAN("\212\38\141\217\12\252\214\60\161\204\76\173", "\157\189\85\207\171\105")] and (TABLE_TableIndirection[IVAN("\210\168\219\190\16\234\174\219\190\6\194\228\136", "\99\166\193\184\213")] > 16)) or ((TABLE_TableIndirection[IVAN("\197\190\141\143\5\135\211\242\208", "\234\182\215\224\219\108")] - TABLE_TableIndirection[IVAN("\196\128\175\52\133\209", "\85\160\225\219")].LastValidSimulationTime) > 1)) then
-			TABLE_TableIndirection[IVAN("\88\4\151\200\115\140", "\43\60\101\227\169\86\188")].IsLocked = false;
-			TABLE_TableIndirection[IVAN("\116\201\197\190\31\156", "\87\16\168\177\223\58\172\217")].ResolvedDesync = 0;
-		end
-	end
-	if (TABLE_TableIndirection[IVAN("\48\204\77\220\126\100", "\91\84\173\57\189")].IsLocked and (TABLE_TableIndirection[IVAN("\20\184\24\253\229\134", "\182\112\217\108\156\192")].ResolvedDesync ~= 0)) then
-		plist.set(TABLE_TableIndirection[IVAN("\186\4\73\246\142\184\33\76\170\219", "\235\202\104\40\143")], IVAN("\43\132\9\186\8\203\25\182\9\146\91\160\12\156", "\217\109\235\123"), true);
-		plist.set(TABLE_TableIndirection[IVAN("\55\133\127\79\117\194\228\185\98\217", "\221\71\233\30\54\16\176\173")], IVAN("\18\243\76\188\49\188\92\176\48\229\30\166\53\235\30\169\53\240\75\186", "\223\84\156\62"), TABLE_TableIndirection[IVAN("\210\253\246\220\242\107", "\91\182\156\130\189\215")].ResolvedDesync);
-		if (IsDefensivePitch(TABLE_TableIndirection[IVAN("\122\114\184\84\59\35", "\53\30\19\204")].ResolvedPitch) or (3325 > 4613)) then
-			TABLE_TableIndirection[IVAN("\247\239\98\137\151\240\244\115\140\226\169", "\199\153\128\16\228")] = (TABLE_TableIndirection[IVAN("\213\43\241\24\226\129", "\199\177\74\133\121")].ResolvedPitch + 90) / 180;
-			normPitch = math.max(0, math.min(1, TABLE_TableIndirection[IVAN("\182\198\174\243\7\207\62\187\193\249\174", "\74\216\169\220\158\87\166")]));
-			entity.set_prop(player, IVAN("\229\28\21\32\106\231\48\22\28\91\250\34\30\41\78\237\49\40\125\8\213", "\58\136\67\115\76"), normPitch);
-		end
-		return true;
-	else
-		plist.set(TABLE_TableIndirection[IVAN("\225\166\217\64\128\50\130\89\180\250", "\61\145\202\184\57\229\64\203")], IVAN("\122\93\155\68\89\18\139\72\88\75\201\94\93\69", "\39\60\50\233"), false);
-		return false;
-	end
+    if not player or not entity.is_alive(player) then
+        return false
+    end
+    
+    local playerId = entity.get_prop(player, "m_iIndex")
+    if playerId <= 0 then return false end
+    
+    local simTime = entity.get_prop(player, "m_flSimulationTime") or 0
+    local eyeAngles = {entity.get_prop(player, "m_angEyeAngles")}
+    local eyeYaw = eyeAngles[2] or 0
+    local lby = entity.get_prop(player, "m_flLowerBodyYawTarget") or 0
+    local flags = entity.get_prop(player, "m_fFlags") or 0
+    local onGround = bit.band(flags, 1) ~= 0
+    
+    local data = DefensiveData[playerId] or {
+        History = {},
+        LastSimulationTime = 0,
+        LastValidSimulationTime = 0,
+        IsLocked = false,
+        LockStartTick = 0,
+        ResolvedDesync = 0,
+        ResolvedPitch = 0,
+        ValidTickCount = 0
+    }
+    DefensiveData[playerId] = data
+    
+    if simTime <= 0.1 then
+        data.History = {}
+        data.IsLocked = false
+        data.ResolvedDesync = 0
+        return false
+    end
+    
+    local isBreaking = false
+    if onGround then
+        local yawDiff = GetAbsAngleDifference(eyeYaw, lby)
+        isBreaking = yawDiff > 35 and yawDiff < 145
+    end
+    
+    local deltaTime = simTime - data.LastSimulationTime
+    local tickInterval = globals.tickinterval()
+    local isValidTick = deltaTime > 0 and math.abs(deltaTime - tickInterval) < 0.001
+    
+    data.LastSimulationTime = simTime
+    
+    if isValidTick then
+        data.LastValidSimulationTime = simTime
+        data.ValidTickCount = data.ValidTickCount + 1
+        
+        table.insert(data.History, {
+            SimTime = simTime,
+            EyeYaw = eyeYaw,
+            Lby = lby,
+            Breaking = isBreaking,
+            OnGround = onGround,
+            Pitch = eyeAngles[1] or 0
+        })
+        
+        if #data.History > 64 then table.remove(data.History, 1) end
+    end
+    
+    if #data.History >= 8 and not data.IsLocked then
+        for i = #data.History - 2, 1, -1 do
+            if i + 2 > #data.History then break end
+            
+            local r1 = data.History[i]
+            local r2 = data.History[i+1]
+            local r3 = data.History[i+2]
+            
+            if r1.Breaking and not r2.Breaking and r3.Breaking then
+                local diff1 = r2.SimTime - r1.SimTime
+                local diff2 = r3.SimTime - r2.SimTime
+                
+                if diff1 > 0 and diff2 > 0 and diff1 < 0.5 and diff2 < 0.5 then
+                    data.IsLocked = true
+                    data.LockStartTick = globals.tickcount()
+                    data.ResolvedDesync = AngleDifference(r2.Lby, r2.EyeYaw)  -- ~
+                    data.ResolvedPitch = r2.Pitch
+                    break
+                end
+            end
+        end
+    end
+    
+    if data.IsLocked then
+        local ticksLocked = globals.tickcount() - data.LockStartTick
+        if ticksLocked > 256 or 
+           (isBreaking and ticksLocked > 16) or
+           (simTime - data.LastValidSimulationTime > 1.0) then
+            data.IsLocked = false
+            data.ResolvedDesync = 0
+        end
+    end
+    
+    if data.IsLocked and data.ResolvedDesync ~= 0 then
+        plist.set(playerId, "Force body yaw", true)
+        plist.set(playerId, "Force body yaw value", data.ResolvedDesync)
+        
+        if IsDefensivePitch(data.ResolvedPitch) then
+            local normPitch = (data.ResolvedPitch + 90) / 180
+            normPitch = math.max(0, math.min(1, normPitch))
+            entity.set_prop(player, "m_flPoseParameter[12]", normPitch)
+        end
+        
+        return true
+    else
+        plist.set(playerId, "Force body yaw", false)
+        return false
+    end
 end
-TABLE_TableIndirection[IVAN("\54\60\164\31\155\59\166\166\23\118\243", "\195\122\83\195\76\226\72\210")] = {[IVAN("\225\218\58\252\45\225\208", "\65\132\180\91\158")]=true};
+
+local LogSystem = {enabled = true}
+
 local function GetBacktrackTicks(player)
-	TABLE_TableIndirection[IVAN("\22\117\220\26\12\113\212\107\85", "\78\101\28\177")] = TABLE_TableIndirection[IVAN("\0\186\244\88\49\173\199\84\49\132\242\94\53\241\176", "\49\69\212\128")](player, IVAN("\26\51\214\254\210\30\1\197\254\224\3\5\223\252\213\30\1\213", "\129\119\108\176\146")) or 0;
-	return math.floor((TABLE_TableIndirection[IVAN("\27\195\8\207\36\2\15\31\218\21\249\44\3\25\121\159", "\124\92\175\103\173\69\110")]() - TABLE_TableIndirection[IVAN("\210\49\14\3\200\53\6\114\145", "\87\161\88\99")]) / TABLE_TableIndirection[IVAN("\53\245\224\206\182\220\48\38\240\236\199\158\222\55\23\235\249\205\187\149\115", "\67\114\153\143\172\215\176")]());
+    local simTime = EntityGetProp(player, "m_flSimulationTime") or 0
+    return math.floor((GlobalsCurTime() - simTime) / GlobalsTickInterval())
 end
-TABLE_TableIndirection[IVAN("\146\173\233\61\167\177\250\11\179\231\190", "\110\222\194\142")].addHit = function(target, damage, hitgroup, confidence, backtrack)
-	TABLE_TableIndirection[IVAN("\7\213\26\176\87\179\57\216\22\172\23\241", "\193\119\185\123\201\50")] = TABLE_TableIndirection[IVAN("\82\6\237\47\27\96\56\114\28\201\42\14\96\26\101\38\248\43\10\60\79", "\127\23\104\153\70\111\25")](target) or IVAN("\60\9\173\161\36\59\185", "\211\105\103\198\207\75\76\215");
-	TABLE_TableIndirection[IVAN("\198\183\245\191", "\214\174\199\208\143\30\108\218")] = TABLE_TableIndirection[IVAN("\52\138\31\163\177\79\255\76\5\180\25\165\181\19\136", "\41\113\228\107\202\197\54\184")](target, IVAN("\119\178\49\116\127\140\52\72\114", "\60\26\237\88")) or 100;
-	TABLE_TableIndirection[IVAN("\208\35\96\225\188\215\63\100\200\175\213\47\103\163\254", "\206\184\74\20\134")] = {[1]=IVAN("\48\225\239\181", "\172\88\132\142\209\147\42\88"),[2]=IVAN("\132\130\201\30\34", "\222\231\234\172\109\86\149"),[3]=IVAN("\254\251\207\21\236\236\200", "\120\141\143\160"),[4]=IVAN("\76\169\176\70\0\173\164\95", "\50\32\204\214"),[5]=IVAN("\148\78\50\113\167\81\135\85\56", "\113\230\39\85\25\211"),[6]=IVAN("\210\190\0\252\103\199\174\76", "\43\190\219\102\136\71\171\203"),[7]=IVAN("\48\119\55\81\54\62\60\92\37", "\57\66\30\80")};
-	TABLE_TableIndirection[IVAN("\33\209\180\18\150\54\225\148\26\204\178\80\212", "\228\73\184\192\117\228\89\148")] = TABLE_TableIndirection[IVAN("\199\128\97\19\221\134\96\4\225\136\120\17\220\204\37", "\116\175\233\21")][hitgroup] or IVAN("\252\247\186\95", "\95\158\152\222\38\187\81");
-	TABLE_TableIndirection[IVAN("\219\177\60\183\173\220\219\178\57\189\177\228\247\186\112\226", "\168\152\221\85\210\195")](255, 255, 255, "[\0");
-	TABLE_TableIndirection[IVAN("\136\210\252\130\165\202\214\136\167\209\231\171\164\217\176\215", "\231\203\190\149")](TABLE_TableIndirection[IVAN("\236\62\224\244\178\225\56\194\49\236\227\249\165", "\123\173\93\131\145\220\149")][1], TABLE_TableIndirection[IVAN("\55\199\238\36\122\237\53\203\225\46\102\188\70", "\153\118\164\141\65\20")][2], TABLE_TableIndirection[IVAN("\207\49\133\231\249\20\205\61\138\237\229\69\190", "\96\142\82\230\130\151")][3], IVAN("\78\163\92\71\233\236\67\169\2", "\142\47\208\47\34\132") .. Build .. "\0");
-	TABLE_TableIndirection[IVAN("\213\178\13\7\85\72\213\177\8\13\73\112\249\185\65\82", "\60\150\222\100\98\59")](255, 255, 255, "] \0");
-	TABLE_TableIndirection[IVAN("\102\48\94\83\213\174\18\74\48\88\68\247\181\54\0\108", "\81\37\92\55\54\187\218")](255, 255, 255, "Hit \0");
-	TABLE_TableIndirection[IVAN("\35\72\164\50\143\20\103\162\59\142\18\104\162\48\196\80", "\225\96\36\205\87")](TABLE_TableIndirection[IVAN("\200\165\65\124\114\91\42\230\170\77\107\57\31", "\105\137\198\34\25\28\47")][1], TABLE_TableIndirection[IVAN("\48\170\66\115\206\5\138\78\122\207\3\236\17", "\160\113\201\33\22")][2], TABLE_TableIndirection[IVAN("\245\91\175\162\167\185\247\87\160\168\187\232\132", "\205\180\56\204\199\201")][3], TABLE_TableIndirection[IVAN("\147\210\61\1\134\204\18\25\142\219\121\72", "\120\227\190\92")] .. " \0");
-	TABLE_TableIndirection[IVAN("\30\80\22\126\45\72\250\237\49\83\13\87\44\91\156\178", "\130\93\60\127\27\67\60\185")](255, 255, 255, "in the \0");
-	TABLE_TableIndirection[IVAN("\107\62\49\75\238\87\94\71\62\55\92\204\76\122\13\98", "\29\40\82\88\46\128\35")](TABLE_TableIndirection[IVAN("\26\70\215\24\15\172\24\74\216\18\19\253\107", "\216\91\37\180\125\97")][1], TABLE_TableIndirection[IVAN("\4\117\31\198\89\49\85\19\207\88\55\51\76", "\55\69\22\124\163")][2], TABLE_TableIndirection[IVAN("\89\208\95\237\209\101\115\251\116\220\78\173\143", "\148\24\179\60\136\191\17\48")][3], TABLE_TableIndirection[IVAN("\186\35\237\167\228\189\63\233\147\226\160\111\169", "\150\210\74\153\192")] .. " \0");
-	TABLE_TableIndirection[IVAN("\192\196\49\143\123\110\151\236\196\55\152\89\117\179\166\152", "\212\131\168\88\234\21\26")](255, 255, 255, "for \0");
-	TABLE_TableIndirection[IVAN("\102\120\128\137\54\51\102\123\133\131\42\11\74\115\204\220", "\71\37\20\233\236\88")](TABLE_TableIndirection[IVAN("\236\69\179\19\78\248\111\83\193\73\162\83\16", "\60\173\38\208\118\32\140\44")][1], TABLE_TableIndirection[IVAN("\96\49\226\214\46\219\98\61\237\220\50\138\17", "\175\33\82\129\179\64")][2], TABLE_TableIndirection[IVAN("\207\236\51\202\50\166\205\224\60\192\46\247\190", "\210\142\143\80\175\92")][3], damage .. " \0");
-	TABLE_TableIndirection[IVAN("\154\229\250\195\183\253\208\201\181\230\225\234\182\238\182\150", "\166\217\137\147")](255, 255, 255, "damage\0");
-	TABLE_TableIndirection[IVAN("\192\175\123\163\255\82\192\172\126\169\227\106\236\164\55\246", "\38\131\195\18\198\145")](171, 171, 171, IVAN("\19\158\40\238\53\85\90\216\51\229\63\20\91\198\96\171", "\52\51\182\90\139\88") .. TABLE_TableIndirection[IVAN("\254\169\149\183", "\35\150\217\176\135")] .. IVAN("\181\16\8\3\121\69\44\185", "\22\153\48\107\108\23\35") .. math.floor(confidence * 100) .. IVAN("\75\201\251\24\107\47\1\188\33\170\251\94\59\49\8", "\137\110\229\219\122\31\21\33"));
-end;
-TABLE_TableIndirection[IVAN("\54\178\63\72\47\88\48\123\23\248\104", "\30\122\221\88\27\86\43\68")].addMiss = function(target, reason, confidence, backtrack)
-	TABLE_TableIndirection[IVAN("\40\36\234\159\61\58\197\135\53\45\174\214", "\230\88\72\139")] = TABLE_TableIndirection[IVAN("\87\186\2\18\23\17\127\119\160\38\23\2\17\93\96\154\23\22\6\77\8", "\56\18\212\118\123\99\104")](target) or IVAN("\43\231\243\221\208\201\16", "\190\126\137\152\179\191");
-	TABLE_TableIndirection[IVAN("\59\11\127\219\166\69\26\7\115\216\165\78\109\82", "\32\72\98\18\171\202")] = (((reason == "?") or (reason == IVAN("\17\134\57\122\248\19\134", "\151\100\232\82\20"))) and IVAN("\109\220\229\7\115\207\243\26", "\104\31\185\150")) or reason;
-	TABLE_TableIndirection[IVAN("\255\181\250\242\233\216\195\207\208\182\225\219\232\203\165\144", "\160\188\217\147\151\135\172\128")](255, 255, 255, "[\0");
-	TABLE_TableIndirection[IVAN("\44\209\25\245\52\221\44\210\28\255\40\229\0\218\85\160", "\169\111\189\112\144\90")](TABLE_TableIndirection[IVAN("\236\128\38\168\177\148\42\141\193\140\55\232\239", "\226\173\227\69\205\223\224\105")][1], TABLE_TableIndirection[IVAN("\121\61\33\94\193\15\123\49\46\84\221\94\8", "\123\56\94\66\59\175")][2], TABLE_TableIndirection[IVAN("\219\64\112\228\20\234\162\245\79\124\243\95\174", "\225\154\35\19\129\122\158")][3], IVAN("\91\19\248\82\248\229\220\45\23", "\84\58\96\139\55\149\135\176") .. Build .. "\0");
-	TABLE_TableIndirection[IVAN("\48\51\170\5\64\219\29\28\51\172\18\98\192\57\86\111", "\94\115\95\195\96\46\175")](255, 255, 255, "] \0");
-	TABLE_TableIndirection[IVAN("\96\71\54\56\32\57\164\239\79\68\45\17\33\42\194\176", "\128\35\43\95\93\78\77\231")](255, 255, 255, "Missed \0");
-	TABLE_TableIndirection[IVAN("\135\17\63\49\25\106\138\171\17\57\38\59\113\174\225\77", "\201\196\125\86\84\119\30")](255, 82, 82, TABLE_TableIndirection[IVAN("\211\226\5\166\198\252\42\190\206\235\65\239", "\223\163\142\100")] .. " \0");
-	TABLE_TableIndirection[IVAN("\161\26\202\180\182\150\53\204\189\183\144\58\204\182\253\210", "\216\226\118\163\209")](255, 255, 255, "due to \0");
-	TABLE_TableIndirection[IVAN("\157\252\18\4\89\100\28\177\252\20\19\123\127\56\251\160", "\95\222\144\123\97\55\16")](255, 82, 82, TABLE_TableIndirection[IVAN("\10\141\183\83\239\28\182\191\66\240\22\138\255\19", "\131\121\228\218\35")] .. " \0");
-	TABLE_TableIndirection[IVAN("\250\220\43\4\119\15\250\223\46\14\107\55\214\215\103\81", "\123\185\176\66\97\25")](171, 171, 171, IVAN("\128\12\22\95\19\117\24", "\81\168\111\121\49\117\79\56") .. math.floor(confidence * 100) .. IVAN("\130\70\165\180\211\80\165\227\232\37\165\242\131\78\172", "\214\167\106\133"));
-end;
-TABLE_TableIndirection[IVAN("\2\49\64\67\7\126\192\108\104", "\185\73\88\44\47\84\31")] = {[IVAN("\152\223\8\161\192\250\155", "\159\232\183\122\192\179")]={"de 𝗮𝘀𝘀𝗲𝗺𝗯𝗹𝘆 𝗿𝗲𝘀𝗼𝗹𝘃𝗲𝗿 veur Gamesense is bijgewerk niggas. NEET KLAAR VEUR NOG MEER ASS FUCKING","maak uchzelf veur kinder, velure ging nao de publieke pagina I'LL FUCK YOU ALL mit 𝗮𝘀𝘀𝗲𝗺𝗯𝗹𝘆 𝗿𝗲𝘀𝗼𝗹𝘃𝗲𝗿","dich neuke 0 winrate hónd maak dich klaor ik gaon","de 𝗮𝘀𝘀𝗲𝗺𝗯𝗹𝘆 𝗿𝗲𝘀𝗼𝗹𝘃𝗲𝗿 heeft een update gekregen dus je kunt mijn lul gewoon in je kont stoppen","ja ik hoor je wel 20 winrate-hond, slik het maar gewoon in @𝗮𝘀𝘀𝗲𝗺𝗯𝗹𝘆𝗴𝘀","verdomme is het niet vreemd dat 𝗴𝗼𝗮𝘁𝗲𝗱 je net heeft genaaid @𝗮𝘀𝘀𝗲𝗺𝗯𝗹𝘆𝗴𝘀?","waardeloze server, je hebt lag, ga jezelf van kant maken, man. Ik ben gewoon een 𝗮𝘀𝘀𝗲𝗺𝗯𝗹𝘆 𝗿𝗲𝘀𝗼𝗹𝘃𝗲𝗿 gebruiker",(IVAN("\32\55\232\35\49\59\164\37\100\36\169\47\100\51\187\50\33\63\170\45\61\114", "\65\68\82\200") .. Build .. IVAN("\101\89\97\96\213\192\62\34\95\119\36\131\143\116\32\16\127\47\202\219\62\45\85\127\96\202\204\118\49\16\119\37\193\220\62\53\66\125\34\202\221\123\43", "\30\69\48\18\64\175\175")),"𝗴𝗼𝗮𝘁𝗲𝗱 won een toernooi van 200 euro met 𝗮𝘀𝘀𝗲𝗺𝗯𝗹𝘆 𝗿𝗲𝘀𝗼𝗹𝘃𝗲𝗿","lol 𝟏 waardeloze hond je bent zo zielig, ik lach me rot","𝗴𝗼𝗮𝘁𝗲𝗱 𝘅 𝘃𝗮𝗻𝗰𝗵𝗲𝘇 maakt alles kapot met 𝗮𝘀𝘀𝗲𝗺𝗯𝗹𝘆 𝗿𝗲𝘀𝗼𝗹𝘃𝗲𝗿. Een hond met een winrate van 20? Zielig dog."}};
-TABLE_TableIndirection[IVAN("\219\37\19\224\8\241\53\90\188", "\91\144\76\127\140")].send = function()
-	if not TABLE_TableIndirection[IVAN("\213\1\97\36\199\255\133", "\176\128\104\38\65\179\218\181")](TABLE_TableIndirection[IVAN("\229\205\231\25\213\201\199\27\196\215\135\69", "\117\176\164\162")].trashTalk) then
-		return;
-	end
-	TABLE_TableIndirection[IVAN("\148\202\23\241\201\124\193\146", "\25\228\162\101\144\186")] = TABLE_TableIndirection[IVAN("\99\63\181\2\193\229\81\115\233", "\132\40\86\217\110\146")].phrases[TABLE_TableIndirection[IVAN("\93\199\46\185\169\103\206\95\112\207\40\177\142\125\232\27\46", "\62\30\171\71\220\199\19\156")](1, #TABLE_TableIndirection[IVAN("\107\76\160\58\110\200\54\8\16", "\45\32\37\204\86\61\169\79")].phrases)];
-	TABLE_TableIndirection[IVAN("\118\89\12\185\187\104\112\77\0\191\240\44", "\28\53\53\101\220\213")](IVAN("\30\93\17\1", "\191\109\60\104\33\58\193\48") .. TABLE_TableIndirection[IVAN("\151\223\10\230\148\210\93\183", "\135\231\183\120")]);
-end;
-TABLE_TableIndirection[IVAN("\212\15\95\235\57\12\172\244\79\28", "\201\134\106\44\132\85\122")] = {[IVAN("\38\0\118\38\4\30\219", "\67\86\108\23\95\97\108\168")]={},[IVAN("\168\57\95\30\145\52\209\81\176\61", "\48\196\88\44\106\196\68\181")]=0,[IVAN("\151\207\216\34\148\161\139\34\150\218\206\53\129\168", "\76\226\191\188\67\224\196\194")]=1};
-TABLE_TableIndirection[IVAN("\235\45\20\255\241\207\45\21\181\173", "\157\185\72\103\144")].initPlayer = function(playerIndex)
-	if (not TABLE_TableIndirection[IVAN("\107\182\153\117\164\167\92\161\207\42", "\209\57\211\234\26\200")].players[playerIndex] or (4950 <= 4553)) then
-		TABLE_TableIndirection[IVAN("\51\203\181\142\92\196\4\220\227\209", "\178\97\174\198\225\48")].players[playerIndex] = {[IVAN("\206\88\3\253\125\206\6\220\66\11\227\97", "\111\175\54\100\145\24\134")]={},[IVAN("\79\27\57\61\74\10\52\26\81\0", "\117\35\121\64")]={},[IVAN("\206\169\239\194\38", "\47\189\221\142\182\67")]={[IVAN("\45\176\49\194\70\174", "\73\64\223\71\171\40\201\64")]=false,[IVAN("\9\159\203\76\163\117\3\131\195", "\29\106\237\164\57\192")]=false,[IVAN("\176\173\245\184\218\192\174\247", "\146\209\196\135\218\181\178\192")]=false},[IVAN("\63\53\144\30\92\177\40\34\167\16\68\166", "\199\77\80\227\113\48")]={[IVAN("\57\54\90\200", "\173\74\95\62")]=0,[IVAN("\197\22\82\48\194\3\185\200\26\89", "\220\166\121\60\86\171\103")]=0.5,[IVAN("\229\3\46\164\9\207\9\230\14\43\181\63", "\122\137\98\93\208\91\170")]=0}};
-	end
-	return TABLE_TableIndirection[IVAN("\181\228\15\64\217\164\172\216\194\177", "\170\231\129\124\47\181\210\201")].players[playerIndex];
-end;
-TABLE_TableIndirection[IVAN("\185\190\41\63\6\60\142\169\127\96", "\74\235\219\90\80\106")].detectJitter = function(playerIndex, currentYaw)
-	TABLE_TableIndirection[IVAN("\72\194\79\58\127\164", "\146\44\163\59\91\90\148\26")] = TABLE_TableIndirection[IVAN("\71\40\171\142\69\99\40\170\196\25", "\41\21\77\216\225")].initPlayer(playerIndex);
-	table.insert(TABLE_TableIndirection[IVAN("\16\76\102\68\81\29", "\37\116\45\18")].angleHistory, {[IVAN("\214\254\65", "\203\175\159\54\194")]=currentYaw,[IVAN("\111\199\20\62", "\162\27\174\121\91\58\47")]=TABLE_TableIndirection[IVAN("\244\201\16\247\62\213\192\230\10\231\11\208\222\192\90\165", "\185\179\165\127\149\95")]()});
-	if ((2665 <= 3933) and (#TABLE_TableIndirection[IVAN("\85\116\219\245\82\1", "\119\49\21\175\148")].angleHistory > 6)) then
-		table.remove(TABLE_TableIndirection[IVAN("\83\180\2\92\104\25", "\149\55\213\118\61\77\41\234")].angleHistory, 1);
-	end
-	if ((3273 == 3273) and (#TABLE_TableIndirection[IVAN("\25\7\222\199\172\105", "\123\125\102\170\166\137\89\207")].angleHistory < 3)) then
-		return false, 0;
-	end
-	TABLE_TableIndirection[IVAN("\67\1\64\25\7\133\175\11\80", "\201\46\96\56\93\110\227")] = 0;
-	for i = 2, #TABLE_TableIndirection[IVAN("\191\2\250\248\80\145", "\161\219\99\142\153\117")].angleHistory do
-		TABLE_TableIndirection[IVAN("\120\184\160\117\136\44", "\173\28\209\198\19")] = math.abs(AngleDifference(TABLE_TableIndirection[IVAN("\113\237\163\186\48\188", "\219\21\140\215")].angleHistory[i].yaw, TABLE_TableIndirection[IVAN("\76\185\210\166\29\24", "\56\40\216\166\199")].angleHistory[i - 1].yaw));
-		TABLE_TableIndirection[IVAN("\43\181\13\11\47\178\19\106\118", "\79\70\212\117")] = math.max(TABLE_TableIndirection[IVAN("\170\23\249\226\240\11\161\83\177", "\109\199\118\129\166\153")], TABLE_TableIndirection[IVAN("\53\185\113\240\116\224", "\150\81\208\23")]);
-	end
-	return TABLE_TableIndirection[IVAN("\244\196\248\175\240\195\230\206\169", "\235\153\165\128")] > 45, Clamp(TABLE_TableIndirection[IVAN("\182\72\186\11\79\32\172\187\235", "\158\219\41\194\79\38\70\202")] / 90, 0, 1);
-end;
-TABLE_TableIndirection[IVAN("\113\32\60\13\226\192\141\81\96\127", "\232\35\69\79\98\142\182")].predictLby = function(playerIndex, animstate)
-	if ((3824 > 409) and not animstate) then
-		return 0, 0;
-	end
-	TABLE_TableIndirection[IVAN("\125\1\11\252\60\80", "\157\25\96\127")] = TABLE_TableIndirection[IVAN("\149\134\230\10\92\39\162\145\176\85", "\81\199\227\149\101\48")].initPlayer(playerIndex);
-	TABLE_TableIndirection[IVAN("\126\71\233\3\243\136\40\151\127\75\190\65", "\219\29\50\155\113\150\230\92")] = animstate.goal_feet_yaw;
-	table.insert(TABLE_TableIndirection[IVAN("\213\33\209\122\186\24", "\45\177\64\165\27\159\40")].lbyHistory, {[IVAN("\11\23\3\191\119", "\18\125\118\111\202")]=TABLE_TableIndirection[IVAN("\83\41\75\232\53\163\211\215\82\37\28\170", "\155\48\92\57\154\80\205\167")],[IVAN("\173\196\182\186", "\37\217\173\219\223\152\203")]=TABLE_TableIndirection[IVAN("\46\9\16\52\78\164\229\42\16\13\2\70\165\243\76\85", "\150\105\101\127\86\47\200")]()});
-	if (#TABLE_TableIndirection[IVAN("\202\243\231\180\130\144", "\160\174\146\147\213\167")].lbyHistory <= 3) then
-	else
-		table.remove(TABLE_TableIndirection[IVAN("\68\229\14\69\73\17", "\33\32\132\122\36\108")].lbyHistory, 1);
-	end
-	if ((2087 == 2087) and (#TABLE_TableIndirection[IVAN("\189\21\102\74\57\233", "\28\217\116\18\43")].lbyHistory < 2)) then
-		return TABLE_TableIndirection[IVAN("\209\66\196\70\213\160\40\254\85\207\17\128", "\92\178\55\182\52\176\206")], 0.1;
-	end
-	TABLE_TableIndirection[IVAN("\22\52\98\1\57\61\112\27\29\48\52\69", "\117\122\85\17")] = math.abs(AngleDifference(TABLE_TableIndirection[IVAN("\140\238\62\69\227\141", "\189\232\143\74\36\198")].lbyHistory[#TABLE_TableIndirection[IVAN("\248\171\30\79\146\90", "\106\156\202\106\46\183")].lbyHistory].value, TABLE_TableIndirection[IVAN("\57\24\111\50\111\109", "\74\93\121\27\83")].lbyHistory[#TABLE_TableIndirection[IVAN("\121\186\242\127\56\235", "\30\29\219\134")].lbyHistory - 1].value));
-	if (TABLE_TableIndirection[IVAN("\89\166\10\238\215\87\25\0\82\162\92\170", "\110\53\199\121\154\148\63\120")] > 60) then
-		TABLE_TableIndirection[IVAN("\5\19\237\58\90\232\8\21\241\122\9", "\156\97\122\159\95\57")] = ((AngleDifference(TABLE_TableIndirection[IVAN("\202\183\206\249\78\82", "\95\174\214\186\152\107\98")].lbyHistory[#TABLE_TableIndirection[IVAN("\141\15\101\138\86\150", "\166\233\110\17\235\115")].lbyHistory].value, TABLE_TableIndirection[IVAN("\124\15\208\192\183\238", "\28\24\110\164\161\146\222")].lbyHistory[#TABLE_TableIndirection[IVAN("\95\194\66\36\30\147", "\69\59\163\54")].lbyHistory - 1].value) > 0) and 1) or -1;
-		return TABLE_TableIndirection[IVAN("\179\189\216\88\54\195\162\156\170\211\15\99", "\214\208\200\170\42\83\173")] + (58 * TABLE_TableIndirection[IVAN("\221\40\96\165\118\205\40\125\174\48\137", "\21\185\65\18\192")]), 0.8;
-	end
-	return TABLE_TableIndirection[IVAN("\253\67\79\9\164\240\66\113\25\184\187\6", "\193\158\54\61\123")], 0.3;
-end;
-TABLE_TableIndirection[IVAN("\7\20\51\182\57\7\37\171\112\65", "\217\85\113\64")].calculateFreestanding = function(playerIndex)
-	TABLE_TableIndirection[IVAN("\71\0\207\193\227\178\233\74\22\201\210\170\210", "\133\43\111\172\160\143\226")] = TABLE_TableIndirection[IVAN("\238\173\68\216\212\210\132\85\197\236\196\160\81\221\240\199\162\73\212\210\142\243", "\160\171\195\48\177")]();
-	if (not TABLE_TableIndirection[IVAN("\223\12\117\44\80\241\163\198\202\6\100\104\12", "\167\179\99\22\77\60\161\207")] or (3404 > 4503)) then
-		return 0, 0;
-	end
-	TABLE_TableIndirection[IVAN("\4\113\142\85\85\46\109\130\95\69\15\58\219", "\44\97\31\235\56")] = {TABLE_TableIndirection[IVAN("\212\0\236\173\229\23\223\161\229\62\234\171\225\75\168", "\196\145\110\152")](playerIndex, IVAN("\85\17\232\247\91\1\236\251\95\39\240", "\146\56\78\158"))};
-	TABLE_TableIndirection[IVAN("\33\212\76\231\86\2\201\70\225\83\35\158\31", "\58\77\187\47\134")] = {TABLE_TableIndirection[IVAN("\55\59\181\14\241\55\115\27\6\5\179\8\245\107\4", "\126\114\85\193\103\133\78\52")](TABLE_TableIndirection[IVAN("\200\212\49\121\200\235\62\121\221\222\32\61\148", "\24\164\187\82")], IVAN("\252\229\74\175\242\222\200\85\173\248\255", "\145\145\186\60\202"))};
-	if (not TABLE_TableIndirection[IVAN("\227\222\54\9\255\255\33\13\225\217\61\65\182", "\100\134\176\83")] or not TABLE_TableIndirection[IVAN("\223\206\65\188\191\58\193\200\69\180\189\80\131", "\117\179\161\34\221\211")]) then
-		return 0, 0;
-	end
-	TABLE_TableIndirection[IVAN("\73\168\191\150", "\197\45\208\154\166\100\159")] = TABLE_TableIndirection[IVAN("\37\251\133\189\63\6\230\143\187\58\39\177\214", "\83\73\148\230\220")][1] - TABLE_TableIndirection[IVAN("\54\209\243\237\246\166\33\214\241\233\225\204\99", "\233\83\191\150\128\143")][1];
-	TABLE_TableIndirection[IVAN("\243\159\138\34", "\109\151\230\175\18")] = TABLE_TableIndirection[IVAN("\172\245\66\69\140\143\232\72\67\137\174\191\17", "\224\192\154\33\36")][2] - TABLE_TableIndirection[IVAN("\134\90\29\143\154\123\10\139\132\93\22\199\211", "\226\227\52\120")][2];
-	TABLE_TableIndirection[IVAN("\1\226\255\176\15\239", "\217\101\139\140\196\42\223\183")] = math.sqrt((TABLE_TableIndirection[IVAN("\30\23\234\74", "\36\122\111\207\122")] * TABLE_TableIndirection[IVAN("\8\16\161\232", "\84\108\104\132\216\216")]) + (TABLE_TableIndirection[IVAN("\200\2\131\8", "\34\172\123\166\56\128\196")] * TABLE_TableIndirection[IVAN("\160\176\237\155", "\116\196\201\200\171\42\19\181")]));
-	if (TABLE_TableIndirection[IVAN("\114\143\232\73\80\80", "\124\22\230\155\61\117\96")] >= 50) then
-	else
-		return 0, 0;
-	end
-	TABLE_TableIndirection[IVAN("\196\165\225\231\251\217\250\233\164\229\234\242\168\165", "\149\165\203\134\139\158\141")] = math.deg(math.atan2(TABLE_TableIndirection[IVAN("\55\181\5\118", "\70\83\204\32")], TABLE_TableIndirection[IVAN("\10\153\78\208", "\224\110\225\107")]));
-	TABLE_TableIndirection[IVAN("\241\111\216\8\49\211\129\164", "\164\148\22\189\81\80\164")] = TABLE_TableIndirection[IVAN("\151\142\99\186\51\82\80\183\148\71\161\40\91\50\226", "\23\210\224\23\211\71\43")](playerIndex, IVAN("\164\185\17\185\82\14\197\245\136\136\23\187\80\56\231\161\148", "\144\201\230\112\215\53\75\188")) or 0;
-	TABLE_TableIndirection[IVAN("\89\192\31\254\210\170\65\128\73", "\197\53\165\121\138\150")] = math.cos(math.rad(TABLE_TableIndirection[IVAN("\236\209\222\44\232\235\214\12\226\220\216\44\168\143", "\64\141\191\185")] - (TABLE_TableIndirection[IVAN("\6\243\181\227\246\222\227\83", "\198\99\138\208\186\151\169")] - 90)));
-	TABLE_TableIndirection[IVAN("\31\252\132\86\25\209\140\74\72\165", "\62\109\149\227")] = math.cos(math.rad(TABLE_TableIndirection[IVAN("\242\134\142\216\5\199\135\165\219\3\242\132\204\132", "\96\147\232\233\180")] - (TABLE_TableIndirection[IVAN("\45\33\31\114\140\46\109\104", "\89\72\88\122\43\237")] + 90)));
-	return ((TABLE_TableIndirection[IVAN("\32\190\163\34\63\35\175\224\102", "\123\76\219\197\86")] > TABLE_TableIndirection[IVAN("\74\209\18\4\250\27\87\204\80\92", "\95\56\184\117\108\142")]) and -1) or 1, math.max(math.abs(TABLE_TableIndirection[IVAN("\252\199\32\248\212\205\50\169\160", "\140\144\162\70")]), math.abs(TABLE_TableIndirection[IVAN("\194\33\94\122\250\244\39\77\55\190", "\142\176\72\57\18")]));
-end;
-TABLE_TableIndirection[IVAN("\148\52\3\43\170\39\21\54\227\97", "\68\198\81\112")].getPlayerState = function(playerIndex)
-	TABLE_TableIndirection[IVAN("\179\14\164\21\9\77", "\125\215\111\208\116\44")] = TABLE_TableIndirection[IVAN("\53\66\92\252\116\74\2\85\10\163", "\60\103\39\47\147\24")].initPlayer(playerIndex);
-	TABLE_TableIndirection[IVAN("\250\15\251\143\213\250\90\245\79\167", "\46\140\106\151\224\182\147")] = {TABLE_TableIndirection[IVAN("\206\35\105\75\255\52\90\71\255\29\111\77\251\104\45", "\34\139\77\29")](playerIndex, IVAN("\189\207\11\81\42\134\245\17\91\42\185\228\4", "\73\208\144\125\52"))};
-	local vx, vy = TABLE_TableIndirection[IVAN("\60\233\134\196\196\25\71\210\111\188", "\171\74\140\234\171\167\112\51")][1] or 0, TABLE_TableIndirection[IVAN("\57\11\64\80\242\164\59\23\9\15", "\205\79\110\44\63\145")][2] or 0;
-	TABLE_TableIndirection[IVAN("\180\79\58\205\176\78\244", "\124\199\63\95\168\212\107\196")] = math.sqrt((vx * vx) + (vy * vy));
-	TABLE_TableIndirection[IVAN("\0\164\82\61\183\178\217", "\147\102\200\51\90\196\151\233")] = TABLE_TableIndirection[IVAN("\30\254\251\196\170\249\28\62\228\223\223\177\240\126\107", "\91\91\144\143\173\222\128")](playerIndex, IVAN("\46\159\74\119\167\79\36\179", "\46\67\192\44\49\203")) or 0;
-	TABLE_TableIndirection[IVAN("\11\216\9\176\43\177\11\0\147\126", "\101\100\182\78\194\68\196")] = bit.band(TABLE_TableIndirection[IVAN("\78\68\49\242\158\14\40", "\181\40\40\80\149\237\43\24")], 1) == 1;
-	TABLE_TableIndirection[IVAN("\17\167\38\57\155\71\29\0\188\49\119\234", "\114\117\210\69\82\218\42")] = TABLE_TableIndirection[IVAN("\97\216\76\122\184\93\241\93\103\156\86\217\72\54\252", "\204\36\182\56\19")](playerIndex, IVAN("\228\116\218\143\89\45\17\226\106\209\140\104\54\6", "\114\137\43\188\227\29\88")) or 0;
-	TABLE_TableIndirection[IVAN("\224\28\188\17\161\77", "\112\132\125\200")].state.moving = TABLE_TableIndirection[IVAN("\238\168\246\118\94\176\173", "\149\157\216\147\19\58")] > 5;
-	TABLE_TableIndirection[IVAN("\205\135\12\201\140\214", "\168\169\230\120")].state.crouching = TABLE_TableIndirection[IVAN("\248\152\135\28\221\128\139\2\242\153\193\71", "\119\156\237\228")] > 0.5;
-	TABLE_TableIndirection[IVAN("\199\208\20\127\134\129", "\30\163\177\96")].state.airborne = not TABLE_TableIndirection[IVAN("\21\46\114\155\50\62\218\30\101\5", "\180\122\64\53\233\93\75")];
-	return TABLE_TableIndirection[IVAN("\210\22\7\60\147\71", "\93\182\119\115")].state;
-end;
-TABLE_TableIndirection[IVAN("\176\26\192\131\187\232\135\13\150\220", "\158\226\127\179\236\215")].resolve = function(playerIndex)
-	if (not TABLE_TableIndirection[IVAN("\196\201\238\211\229\133\153", "\182\145\160\169")](TABLE_TableIndirection[IVAN("\12\41\21\26\162\2\60\46\36\5\226\95", "\111\89\64\80\118\199")].enabled) or (3506 <= 1309)) then
-		return;
-	end
-	TABLE_TableIndirection[IVAN("\175\187\15\95\186\165\39\66\250\231", "\38\223\215\110")] = TABLE_TableIndirection[IVAN("\123\213\24\204\191\71\252\9\209\155\76\212\28\128\251", "\203\62\187\108\165")](playerIndex, IVAN("\244\75\65\23\127\250\213\225", "\176\153\20\40\94\17\158"));
-	if (not TABLE_TableIndirection[IVAN("\184\63\186\74\192\186\26\191\22\149", "\165\200\83\219\51")] or (TABLE_TableIndirection[IVAN("\215\230\117\98\212\167\149\224\130\186", "\132\167\138\20\27\177\213\220")] <= 0)) then
-		return;
-	end
-	if HasOption(TABLE_TableIndirection[IVAN("\199\220\198\64\57\255\208\237\88\47\183\133", "\92\146\181\131\44")].correction, IVAN("\111\251\71\131\176\83\30\203\78\190\115\131\173\79\27\203\78\236", "\189\43\158\33\230\222\32\119")) then
-		TABLE_TableIndirection[IVAN("\90\197\75\84\134\77\201\91\84\169\93\212\68\71\141\27\144", "\232\62\160\45\49")] = ResolveDefensive(playerIndex);
-		if ((2955 == 2955) and TABLE_TableIndirection[IVAN("\112\214\243\169\175\103\218\227\169\128\119\199\252\186\164\49\131", "\193\20\179\149\204")]) then
-			return;
-		end
-	end
-	TABLE_TableIndirection[IVAN("\211\0\149\195\146\81", "\162\183\97\225")] = TABLE_TableIndirection[IVAN("\27\192\247\248\16\244\164\59\128\180", "\193\73\165\132\151\124\130")].initPlayer(playerIndex);
-	TABLE_TableIndirection[IVAN("\204\204\160\86\165\162\204\214\172\30\230", "\214\173\162\201\59\214")] = GetAnimstate(playerIndex);
-	if not TABLE_TableIndirection[IVAN("\34\119\163\76\196\52\34\109\175\4\135", "\64\67\25\202\33\183")] then
-		return;
-	end
-	TABLE_TableIndirection[IVAN("\236\247\116\133\47\197\6\185", "\35\137\142\17\220\78\178")] = TABLE_TableIndirection[IVAN("\44\64\44\12\62\90\36\21\40\11\117", "\97\77\46\69")].eye_yaw;
-	TABLE_TableIndirection[IVAN("\210\222\24\129\218\204\25\171\220\154\80", "\197\191\191\96")] = TABLE_TableIndirection[IVAN("\203\39\228\67\75\252\76\222\44\168\30", "\45\170\73\141\46\56\136")].max_yaw or 58;
-	TABLE_TableIndirection[IVAN("\145\3\204\252\170\149\52\149\14\217\224\234\215", "\103\225\111\173\133\207\231")] = TABLE_TableIndirection[IVAN("\126\129\230\90\64\146\240\71\9\212", "\53\44\228\149")].getPlayerState(playerIndex);
-	TABLE_TableIndirection[IVAN("\203\222\58\17\222\54\200\200\126\85", "\68\173\187\91\101\171")] = {};
-	if (HasOption(TABLE_TableIndirection[IVAN("\201\6\55\203\76\143\120\215\232\28\87\151", "\185\156\111\114\167\41\226\29")].correction, IVAN("\33\12\2\52\177\241\75\55\19\51\187\239\29\0\4", "\131\107\101\118\64\212")) or (2903 == 1495)) then
-		local isJittering, jitterConf = TABLE_TableIndirection[IVAN("\243\211\63\36\75\214\204\211\147\124", "\169\161\182\76\75\39\160")].detectJitter(playerIndex, TABLE_TableIndirection[IVAN("\220\75\178\178\26\53\237\137", "\200\185\50\215\235\123\66")]);
-		TABLE_TableIndirection[IVAN("\244\132\216\246\159\100\31\225\196\137", "\122\146\225\185\130\234\22")].jitter = jitterConf;
-	else
-		TABLE_TableIndirection[IVAN("\191\231\193\219\250\169\188\241\133\159", "\219\217\130\160\175\143")].jitter = 0;
-	end
-	if ((4546 >= 2275) and HasOption(TABLE_TableIndirection[IVAN("\11\181\103\49\59\177\71\51\42\175\7\109", "\93\94\220\34")].correction, IVAN("\43\205\210\147\212\244\189\61\205\210\133\214\225\248\29", "\157\111\168\161\234\186\151"))) then
-		local lbyAngle, lbyConf = TABLE_TableIndirection[IVAN("\73\69\102\62\206\175\183\151\62\16", "\229\27\32\21\81\162\217\210")].predictLby(playerIndex, TABLE_TableIndirection[IVAN("\45\194\242\55\89\56\205\239\63\15\124", "\42\76\172\155\90")]);
-		TABLE_TableIndirection[IVAN("\244\136\128\61\21\224\136\146\108\80", "\96\146\237\225\73")].lby = lbyConf;
-	else
-		TABLE_TableIndirection[IVAN("\238\123\9\252\92\104\167\251\59\88", "\194\136\30\104\136\41\26")].lby = 0;
-	end
-	if HasOption(TABLE_TableIndirection[IVAN("\233\223\38\68\17\189\172\33\200\197\70\24", "\79\188\182\99\40\116\208\201")].advanced, IVAN("\81\194\51\68\49\114\43\131\25\66\34\49", "\95\29\163\74\33\67")) then
-		TABLE_TableIndirection[IVAN("\112\51\89\50\109\220\65\44", "\100\28\82\32\87\31\234")] = TABLE_TableIndirection[IVAN("\20\92\244\120\239\207\207\59\37\98\242\126\235\147\184", "\94\81\50\128\17\155\182\136")](playerIndex, IVAN("\134\3\226\53\210\187\15\130\187\61\246\56\239\177\8\130\153", "\231\235\92\132\89\130\212\124"), 6) or 1;
-		TABLE_TableIndirection[IVAN("\248\177\245\43\196\87\251\167\177\111", "\37\158\212\148\95\177")].freestand = ((TABLE_TableIndirection[IVAN("\120\29\189\130\31\34\89\244", "\109\20\124\196\231")] < 0.75) and 1) or 0;
-	else
-		TABLE_TableIndirection[IVAN("\166\184\117\177\36\50\165\174\49\245", "\64\192\221\20\197\81")].freestand = 0;
-	end
-	TABLE_TableIndirection[IVAN("\169\243\227\182\178\189\243\241\231\247", "\199\207\150\130\194")].moving = (TABLE_TableIndirection[IVAN("\165\70\122\241\70\167\121\111\233\87\176\15\43", "\35\213\42\27\136")].moving and 1) or 0;
-	TABLE_TableIndirection[IVAN("\166\130\58\171\205\224\165\148\126\239", "\146\192\231\91\223\184")].static = (not TABLE_TableIndirection[IVAN("\74\253\247\48\212\166\52\26\91\229\243\108\129", "\110\58\145\150\73\177\212\103")].moving and not TABLE_TableIndirection[IVAN("\228\56\203\235\78\217\218\224\53\222\247\14\155", "\137\148\84\170\146\43\171")].airborne and 1) or 0;
-	TABLE_TableIndirection[IVAN("\7\218\126\233\98\19\218\108\184\39", "\23\97\191\31\157")].crouching = (TABLE_TableIndirection[IVAN("\150\142\6\28\216\32\181\150\6\17\216\119\214", "\82\230\226\103\101\189")].crouching and 1) or 0;
-	TABLE_TableIndirection[IVAN("\156\47\186\182\28\159\26\161\180\16\130\41\167\184\27\133\111\227", "\116\235\74\211\209")] = 0.5;
-	if HasOption(TABLE_TableIndirection[IVAN("\29\53\251\41\45\49\219\43\60\47\155\117", "\69\72\92\190")].advanced, IVAN("\23\63\229\196\191\161\0\178\118\23\225\213\185\166\31\185\49", "\215\86\91\132\180\203\200\118")) then
-		TABLE_TableIndirection[IVAN("\36\235\143\212\59\250\182\193\54\234\143\208\39\231\137\221\118\190", "\179\83\142\230")] = 0.4 + (math.sin(TABLE_TableIndirection[IVAN("\253\35\242\55\56\19\228\252\207\61\201\60\52\26\178\143", "\191\186\79\157\85\89\127\151")]()) * 0.2);
-	end
-	TABLE_TableIndirection[IVAN("\240\115\170\207\136\118\255\126\161\139\212", "\37\150\26\196\174\228")] = 0;
-	TABLE_TableIndirection[IVAN("\207\249\188\84\59\170\198\254\180\92\51\140\199\243\183\16\103", "\233\169\144\210\53\87")] = 0.5;
-	if (TABLE_TableIndirection[IVAN("\36\67\236\200\55\84\232\207\103\22", "\188\66\38\141")].freestand > 0.7) then
-		local fsSide, _ = TABLE_TableIndirection[IVAN("\211\85\30\62\127\84\13\218\164\0", "\168\129\48\109\81\19\34\104")].calculateFreestanding(playerIndex);
-		TABLE_TableIndirection[IVAN("\113\29\2\49\211\22\178\253\114\81\92", "\153\23\116\108\80\191\69\219")] = fsSide;
-		TABLE_TableIndirection[IVAN("\79\22\243\217\244\168\121\71\25\244\220\253\133\117\76\90\173", "\22\41\127\157\184\152\235")] = TABLE_TableIndirection[IVAN("\17\194\224\222\2\213\228\217\82\151", "\170\119\167\129")].freestand;
-	elseif (TABLE_TableIndirection[IVAN("\220\245\189\103\150\76\223\227\249\35", "\62\186\144\220\19\227")].lby > 0.6) then
-		local lbyAngle, _ = TABLE_TableIndirection[IVAN("\147\249\255\217\173\234\233\196\228\172", "\182\193\156\140")].predictLby(playerIndex, TABLE_TableIndirection[IVAN("\192\66\31\191\245\43\192\88\19\247\182", "\95\161\44\118\210\134")]);
-		TABLE_TableIndirection[IVAN("\224\73\29\12\118\229\236\170\227\5\67", "\206\134\32\115\109\26\182\133")] = ((AngleDifference(lbyAngle, TABLE_TableIndirection[IVAN("\51\225\202\42\92\74\115\168", "\61\86\152\175\115\61")]) > 0) and 1) or -1;
-		TABLE_TableIndirection[IVAN("\175\8\210\49\221\162\44\201\175\8\216\53\223\130\38\130\249", "\167\201\97\188\80\177\225\67")] = TABLE_TableIndirection[IVAN("\72\13\133\187\233\147\75\27\193\255", "\225\46\104\228\207\156")].lby;
-	elseif ((819 >= 22) and (TABLE_TableIndirection[IVAN("\172\197\178\90\34\65\183\172\239\144", "\223\202\160\211\46\87\51\210")].jitter > 0.4)) then
-		TABLE_TableIndirection[IVAN("\208\224\20\117\1\229\224\30\113\72\134", "\109\182\137\122\20")] = ((TABLE_TableIndirection[IVAN("\86\168\6\251\165\135", "\28\50\201\114\154\128\183\138")].resolverData.side == 0) and 1) or -TABLE_TableIndirection[IVAN("\174\135\13\243\239\214", "\146\202\230\121")].resolverData.side;
-		TABLE_TableIndirection[IVAN("\232\230\224\31\203\145\175\48\232\230\234\27\201\177\165\123\190", "\94\142\143\142\126\167\210\192")] = TABLE_TableIndirection[IVAN("\6\192\28\245\210\18\192\14\164\151", "\167\96\165\125\129")].jitter;
-	elseif HasOption(TABLE_TableIndirection[IVAN("\50\223\51\74\71\43\78\134\19\197\83\22", "\232\103\182\118\38\34\70\43")].advanced, IVAN("\23\69\58\247\53\119\58\69\44\230\112\82\44\84\35\230", "\17\85\55\79\131\80")) then
-		TABLE_TableIndirection[IVAN("\206\140\183\173\51\251\140\189\169\122\152", "\95\168\229\217\204")] = ((TABLE_TableIndirection[IVAN("\142\58\146\136\207\107", "\233\234\91\230")].resolverData.side == 0) and 1) or -TABLE_TableIndirection[IVAN("\85\64\150\114\226\1", "\199\49\33\226\19")].resolverData.side;
-		TABLE_TableIndirection[IVAN("\84\82\77\30\203\113\84\77\25\206\86\94\77\28\194\23\11", "\167\50\59\35\127")] = 0.3;
-	else
-		TABLE_TableIndirection[IVAN("\78\26\92\237\164\123\26\86\233\237\24", "\200\40\115\50\140")] = TABLE_TableIndirection[IVAN("\247\44\99\30\182\125", "\127\147\77\23")].resolverData.side;
-		TABLE_TableIndirection[IVAN("\141\239\251\117\124\168\233\251\114\121\143\227\251\119\117\206\182", "\16\235\134\149\20")] = 0.5;
-	end
-	finalConfidence = TABLE_TableIndirection[IVAN("\220\66\64\167\0\164\3\212\77\71\162\9\137\15\223\14\30", "\108\186\43\46\198\108\231")] * TABLE_TableIndirection[IVAN("\37\186\252\6\116\38\143\231\4\120\59\188\225\8\115\60\250\165", "\28\82\223\149\97")];
-	TABLE_TableIndirection[IVAN("\172\50\74\76\168\38\94\87\187\48\67\91\190\38\8\14", "\62\205\85\45")] = 0.8;
-	TABLE_TableIndirection[IVAN("\118\3\175\175\11\141\12\123\15\164\157\10\155\12\102\4\174\165\6\204\89", "\105\21\108\193\201\98\233")] = 0.4;
-	if ((3162 == 3162) and (finalConfidence < TABLE_TableIndirection[IVAN("\67\138\21\248\202\58\223\78\134\30\202\203\44\223\83\141\20\242\199\123\138", "\186\32\229\123\158\163\94")])) then
-		TABLE_TableIndirection[IVAN("\5\36\118\216\28\182\36\13\53\116\196\28\182\36\65\115", "\87\100\67\17\170\121\197")] = TABLE_TableIndirection[IVAN("\239\140\189\146\82\166\253\130\172\133\89\176\253\152\255\208", "\213\142\235\218\224\55")] * (finalConfidence / TABLE_TableIndirection[IVAN("\11\173\247\195\1\166\252\203\11\167\205\205\26\167\234\205\7\174\253\128\88", "\165\104\194\153")]);
-	end
-	TABLE_TableIndirection[IVAN("\149\53\202\164\245\75\136\131\17\215\172\245\88\200\215", "\237\231\80\185\203\153\61")] = TABLE_TableIndirection[IVAN("\160\41\133\75\68\178\117\208", "\37\197\80\224\18")] + (TABLE_TableIndirection[IVAN("\20\67\84\98\177\10\91\66\69\241\73", "\212\121\34\44\38")] * TABLE_TableIndirection[IVAN("\188\179\36\4\114\158\251\90\191\255\122", "\62\218\218\74\101\30\205\146")] * TABLE_TableIndirection[IVAN("\67\174\126\227\216\45\87\38\84\172\119\244\206\45\1\127", "\79\34\201\25\145\189\94\36")]);
-	resolvedAngle = NormalizeAngle(TABLE_TableIndirection[IVAN("\82\41\249\5\76\66\69\40\203\4\71\88\69\105\186", "\52\32\76\138\106\32")]);
-	TABLE_TableIndirection[IVAN("\161\251\39\226\115\190\252\53\212\127\182\249\53\131\42", "\26\216\154\80\166")] = AngleDifference(resolvedAngle, TABLE_TableIndirection[IVAN("\201\208\232\122\124\59\137\153", "\76\172\169\141\35\29")]);
-	yawDifference = Clamp(TABLE_TableIndirection[IVAN("\197\216\239\39\213\223\254\6\206\220\246\0\217\156\168", "\99\188\185\152")], -TABLE_TableIndirection[IVAN("\223\21\174\42\166\193\13\184\13\230\130", "\195\178\116\214\110")], TABLE_TableIndirection[IVAN("\8\246\158\81\196\245\28\249\133\48\145", "\134\101\151\230\21\161")]);
-	TABLE_TableIndirection[IVAN("\153\134\51\71\55\1\229\189\207\106", "\128\201\234\90\52\67\82")](TABLE_TableIndirection[IVAN("\180\65\63\109\207\182\100\58\49\154", "\170\196\45\94\20")], IVAN("\88\75\23\55\196\96\50\113\64\28\116\216\33\39", "\80\30\36\101\84\161\64"), true);
-	TABLE_TableIndirection[IVAN("\150\93\16\81\204\8\163\69\92\18", "\91\198\49\121\34\184")](TABLE_TableIndirection[IVAN("\36\202\118\160\140\38\239\115\252\217", "\233\84\166\23\217")], IVAN("\94\119\234\229\51\97\122\119\252\255\118\56\121\111\184\240\55\45\109\125", "\65\24\24\152\134\86"), yawDifference);
-	TABLE_TableIndirection[IVAN("\184\54\252\72\249\103", "\41\220\87\136")].resolverData.side = TABLE_TableIndirection[IVAN("\35\63\237\241\194\152\44\50\230\181\158", "\203\69\86\131\144\174")];
-	TABLE_TableIndirection[IVAN("\189\31\71\88\141\0", "\113\217\126\51\57\168\48\135")].resolverData.confidence = finalConfidence;
-	TABLE_TableIndirection[IVAN("\27\20\34\73\13\47", "\174\127\117\86\40\40\31\22")].resolverData.lastResolved = TABLE_TableIndirection[IVAN("\251\55\67\217\221\55\95\239\213\56\71\248\211\46\66\207\153\107", "\187\188\91\44")]();
-end;
-TABLE_TableIndirection[IVAN("\45\242\109\42\238\27\26\229\59\117", "\109\127\151\30\69\130")].processAll = function()
-	TABLE_TableIndirection[IVAN("\209\144\101\10\192\222\166\34\219\134\124\93\149", "\118\178\229\23\120\165\176\210")] = TABLE_TableIndirection[IVAN("\34\208\67\11\13\163\50\137\12\223\71\42\3\186\47\169\64\140", "\221\101\188\44\105\108\207\65")]();
-	if (((TABLE_TableIndirection[IVAN("\85\37\5\176\215\88\36\35\171\209\93\117\71", "\178\54\80\119\194")] - TABLE_TableIndirection[IVAN("\6\10\82\205\227\239\188\208\113\95", "\162\84\111\33\162\143\153\217")].lastUpdate) < TABLE_TableIndirection[IVAN("\21\222\14\133\43\205\24\152\98\139", "\234\71\187\125")].updateInterval) or (2369 > 4429)) then
-		return;
-	end
-	TABLE_TableIndirection[IVAN("\29\51\82\90\242\33\48\80\66\251\3\121\1", "\158\113\92\49\59")] = TABLE_TableIndirection[IVAN("\201\126\85\121\234\31\253\2\248\92\78\115\255\10\234\11\237\105\68\98\187\86", "\103\140\16\33\16\158\102\186")]();
-	if (not TABLE_TableIndirection[IVAN("\203\130\190\116\15\12\203\140\164\112\17\121\151", "\92\167\237\221\21\99")] or not TABLE_TableIndirection[IVAN("\218\46\57\47\235\57\4\53\222\44\36\48\250\101\125", "\70\159\64\77")](TABLE_TableIndirection[IVAN("\219\64\81\254\22\231\67\83\230\31\197\10\2", "\122\183\47\50\159")])) then
-		return;
-	end
-	TABLE_TableIndirection[IVAN("\199\63\162\66\137\199\34\226\31", "\224\162\81\199\47")] = TABLE_TableIndirection[IVAN("\205\75\39\52\151\241\98\54\41\179\228\68\42\56\145\251\0\99", "\227\136\37\83\93")](true);
-	if not TABLE_TableIndirection[IVAN("\92\163\13\121\80\168\27\49\9", "\20\57\205\104")] then
-		return;
-	end
-	for _, enemy in ipairs(TABLE_TableIndirection[IVAN("\45\165\29\180\19\95\32\109\251", "\83\72\203\120\217\122\58")]) do
-		if ((4095 >= 3183) and TABLE_TableIndirection[IVAN("\153\231\175\170\187\164\150\175\200\183\170\185\184\250\236", "\223\220\137\219\195\207\221")](enemy) and TABLE_TableIndirection[IVAN("\54\70\75\235\56\10\97\76\199\34\22\69\70\167\124", "\76\115\40\63\130")](enemy)) then
-			TABLE_TableIndirection[IVAN("\181\31\62\162\186\199\130\8\104\253", "\177\231\122\77\205\214")].resolve(enemy);
-		end
-	end
-	TABLE_TableIndirection[IVAN("\118\22\82\79\165\74\65\1\4\16", "\60\36\115\33\32\201")].lastUpdate = TABLE_TableIndirection[IVAN("\180\99\69\84\73\80\41\149\190\117\92\3\28", "\193\215\22\55\38\44\62\93")];
-end;
+
+function LogSystem.addHit(target, damage, hitgroup, confidence, backtrack)
+    local playerName = EntityGetPlayerName(target) or "Unknown"
+    local hp = EntityGetProp(target, "m_iHealth") or 100
+    local hitgroupNames = {
+        [1] = "head",
+        [2] = "chest",
+        [3] = "stomach",
+        [4] = "left arm",
+        [5] = "right arm",
+        [6] = "left leg",
+        [7] = "right leg"
+    }
+    local hitgroupStr = hitgroupNames[hitgroup] or "body"
+    
+    ClientColorLog(255, 255, 255, "[\0") 
+    ClientColorLog(AccentColor[1], AccentColor[2], AccentColor[3], "assembly-" .. Build .. "\0")
+    ClientColorLog(255, 255, 255, "] \0") 
+    ClientColorLog(255, 255, 255, "Hit \0")
+    ClientColorLog(AccentColor[1], AccentColor[2], AccentColor[3], playerName .. " \0")
+    ClientColorLog(255, 255, 255, "in the \0") 
+    ClientColorLog(AccentColor[1], AccentColor[2], AccentColor[3], hitgroupStr .. " \0")
+    ClientColorLog(255, 255, 255, "for \0") 
+    ClientColorLog(AccentColor[1], AccentColor[2], AccentColor[3], damage .. " \0")
+    ClientColorLog(255, 255, 255, "damage\0") 
+    ClientColorLog(171, 171, 171, " (remaining hp: " .. hp .. ", conf: " .. math.floor(confidence * 100) .. "%, bt: 5OO $$$)")-- .. backtrack .. ")"
+end
+
+function LogSystem.addMiss(target, reason, confidence, backtrack)
+    local playerName = EntityGetPlayerName(target) or "Unknown"
+    local simpleReason = (reason == "?" or reason == "unknown") and "resolver" or reason
+    
+    ClientColorLog(255, 255, 255, "[\0") 
+    ClientColorLog(AccentColor[1], AccentColor[2], AccentColor[3], "assembly-" .. Build .. "\0")
+    ClientColorLog(255, 255, 255, "] \0") 
+    ClientColorLog(255, 255, 255, "Missed \0") 
+    ClientColorLog(255, 82, 82, playerName .. " \0")
+    ClientColorLog(255, 255, 255, "due to \0") 
+    ClientColorLog(255, 82, 82, simpleReason .. " \0")
+    ClientColorLog(171, 171, 171, "(conf: " .. math.floor(confidence * 100) .. "%, bt: 5OO $$$)")-- .. backtrack .. ")")
+end
+
+local KillSay = {
+    phrases = {
+        "de 𝗮𝘀𝘀𝗲𝗺𝗯𝗹𝘆 𝗿𝗲𝘀𝗼𝗹𝘃𝗲𝗿 veur Gamesense is bijgewerk niggas. NEET KLAAR VEUR NOG MEER ASS FUCKING",
+        "maak uchzelf veur kinder, velure ging nao de publieke pagina I'LL FUCK YOU ALL mit 𝗮𝘀𝘀𝗲𝗺𝗯𝗹𝘆 𝗿𝗲𝘀𝗼𝗹𝘃𝗲𝗿",
+        "dich neuke 0 winrate hónd maak dich klaor ik gaon",
+        "de 𝗮𝘀𝘀𝗲𝗺𝗯𝗹𝘆 𝗿𝗲𝘀𝗼𝗹𝘃𝗲𝗿 heeft een update gekregen dus je kunt mijn lul gewoon in je kont stoppen",
+        "ja ik hoor je wel 20 winrate-hond, slik het maar gewoon in @𝗮𝘀𝘀𝗲𝗺𝗯𝗹𝘆𝗴𝘀",
+        "verdomme is het niet vreemd dat 𝗴𝗼𝗮𝘁𝗲𝗱 je net heeft genaaid @𝗮𝘀𝘀𝗲𝗺𝗯𝗹𝘆𝗴𝘀?",
+        "waardeloze server, je hebt lag, ga jezelf van kant maken, man. Ik ben gewoon een 𝗮𝘀𝘀𝗲𝗺𝗯𝗹𝘆 𝗿𝗲𝘀𝗼𝗹𝘃𝗲𝗿 gebruiker",
+        "de build van assembly " .. Build .. " is zo goed, je moet hem echt eens proberen",
+        "𝗴𝗼𝗮𝘁𝗲𝗱 won een toernooi van 200 euro met 𝗮𝘀𝘀𝗲𝗺𝗯𝗹𝘆 𝗿𝗲𝘀𝗼𝗹𝘃𝗲𝗿",
+        "lol 𝟏 waardeloze hond je bent zo zielig, ik lach me rot",
+        "𝗴𝗼𝗮𝘁𝗲𝗱 𝘅 𝘃𝗮𝗻𝗰𝗵𝗲𝘇 maakt alles kapot met 𝗮𝘀𝘀𝗲𝗺𝗯𝗹𝘆 𝗿𝗲𝘀𝗼𝗹𝘃𝗲𝗿. Een hond met een winrate van 20? Zielig dog."
+    }
+}
+
+function KillSay.send()
+    if not UiGet(UiElements.trashTalk) then
+        return
+    end
+    local phrase = KillSay.phrases[ClientRandomInt(1, #KillSay.phrases)]
+    ClientExec("say " .. phrase)
+end
+
+local Resolver = {
+    players = {},
+    lastUpdate = 0,
+    updateInterval = 1
+}
+
+function Resolver.initPlayer(playerIndex)
+    if not Resolver.players[playerIndex] then
+        Resolver.players[playerIndex] = {
+            angleHistory = {},
+            lbyHistory = {},
+            state = {moving = false, crouching = false, airborne = false},
+            resolverData = {side = 0, confidence = 0.5, lastResolved = 0}
+        }
+    end
+    return Resolver.players[playerIndex]
+end
+
+function Resolver.detectJitter(playerIndex, currentYaw)
+    local data = Resolver.initPlayer(playerIndex)
+    table.insert(data.angleHistory, {yaw = currentYaw, time = GlobalsCurTime()})
+    if #data.angleHistory > 6 then
+        table.remove(data.angleHistory, 1)
+    end
+    if #data.angleHistory < 3 then
+        return false, 0
+    end
+    local maxDiff = 0
+    for i = 2, #data.angleHistory do
+        local diff = math.abs(AngleDifference(data.angleHistory[i].yaw, data.angleHistory[i - 1].yaw))
+        maxDiff = math.max(maxDiff, diff)
+    end
+    return maxDiff > 45, Clamp(maxDiff / 90, 0, 1)
+end
+
+function Resolver.predictLby(playerIndex, animstate)
+    if not animstate then
+        return 0, 0
+    end
+    local data = Resolver.initPlayer(playerIndex)
+    local currentLby = animstate.goal_feet_yaw
+    table.insert(data.lbyHistory, {value = currentLby, time = GlobalsCurTime()})
+    if #data.lbyHistory > 3 then
+        table.remove(data.lbyHistory, 1)
+    end
+    if #data.lbyHistory < 2 then
+        return currentLby, 0.1
+    end
+    local lastChange = math.abs(AngleDifference(data.lbyHistory[#data.lbyHistory].value, data.lbyHistory[#data.lbyHistory - 1].value))
+    if lastChange > 60 then
+        local direction = (AngleDifference(data.lbyHistory[#data.lbyHistory].value, data.lbyHistory[#data.lbyHistory - 1].value) > 0) and 1 or -1
+        return currentLby + (58 * direction), 0.8
+    end
+    return currentLby, 0.3
+end
+
+function Resolver.calculateFreestanding(playerIndex)
+    local localPlayer = EntityGetLocalPlayer()
+    if not localPlayer then
+        return 0, 0
+    end
+    local enemyOrigin = {EntityGetProp(playerIndex, "m_vecOrigin")}
+    local localOrigin = {EntityGetProp(localPlayer, "m_vecOrigin")}
+    if not enemyOrigin or not localOrigin then
+        return 0, 0
+    end
+    local dx = localOrigin[1] - enemyOrigin[1]
+    local dy = localOrigin[2] - enemyOrigin[2]
+    local dist = math.sqrt(dx * dx + dy * dy)
+    if dist < 50 then
+        return 0, 0
+    end
+    local angleToLocal = math.deg(math.atan2(dy, dx))
+    local eyeYaw = EntityGetProp(playerIndex, "m_angEyeAngles[1]") or 0
+    local leftDot = math.cos(math.rad(angleToLocal - (eyeYaw - 90)))
+    local rightDot = math.cos(math.rad(angleToLocal - (eyeYaw + 90)))
+    return (leftDot > rightDot) and -1 or 1, math.max(math.abs(leftDot), math.abs(rightDot))
+end
+
+function Resolver.getPlayerState(playerIndex)
+    local data = Resolver.initPlayer(playerIndex)
+    local velocity = {EntityGetProp(playerIndex, "m_vecVelocity")}
+    local vx, vy = velocity[1] or 0, velocity[2] or 0
+    local speed = math.sqrt(vx * vx + vy * vy)
+    local flags = EntityGetProp(playerIndex, "m_fFlags") or 0
+    local onGround = bit.band(flags, 1) == 1
+    local duckAmount = EntityGetProp(playerIndex, "m_flDuckAmount") or 0
+    data.state.moving = speed > 5
+    data.state.crouching = duckAmount > 0.5
+    data.state.airborne = not onGround
+    return data.state
+end
+
+function Resolver.resolve(playerIndex)
+    if not UiGet(UiElements.enabled) then
+        return
+    end
+
+    local playerId = EntityGetProp(playerIndex, "m_iIndex")
+    if not playerId or playerId <= 0 then
+        return
+    end
+
+    if HasOption(UiElements.correction, "Defensive Resolver") then
+        local defensiveActive = ResolveDefensive(playerIndex)
+        if defensiveActive then
+            return
+        end
+    end
+
+    local data = Resolver.initPlayer(playerIndex)
+    local animstate = GetAnimstate(playerIndex)
+    if not animstate then
+        return
+    end
+
+    local eyeYaw = animstate.eye_yaw
+    local maxDesync = animstate.max_yaw or 58
+    local playerState = Resolver.getPlayerState(playerIndex)
+
+    local features = {}
+    if HasOption(UiElements.correction, "Jitter Resolver") then
+        local isJittering, jitterConf = Resolver.detectJitter(playerIndex, eyeYaw)
+        features.jitter = jitterConf
+    else
+        features.jitter = 0
+    end
+
+    if HasOption(UiElements.correction, "Desync Resolver") then
+        local lbyAngle, lbyConf = Resolver.predictLby(playerIndex, animstate)
+        features.lby = lbyConf
+    else
+        features.lby = 0
+    end
+
+    if HasOption(UiElements.advanced, "Layer-6 Scan") then
+        local layer6 = EntityGetProp(playerIndex, "m_flPoseParameter", 6) or 1.0
+        features.freestand = (layer6 < 0.75) and 1 or 0
+    else
+        features.freestand = 0
+    end
+
+    features.moving = playerState.moving and 1 or 0
+    features.static = (not playerState.moving and not playerState.airborne) and 1 or 0
+    features.crouching = playerState.crouching and 1 or 0
+
+    local weightPrediction = 0.5
+    if HasOption(UiElements.advanced, "Adaptive Learning") then
+        weightPrediction = 0.4 + math.sin(GlobalsCurTime()) * 0.2
+    end
+
+    local finalSide = 0
+    local finalConfidence = 0.5
+
+    if features.freestand > 0.7 then
+        local fsSide, _ = Resolver.calculateFreestanding(playerIndex)
+        finalSide = fsSide
+        finalConfidence = features.freestand
+    elseif features.lby > 0.6 then
+        local lbyAngle, _ = Resolver.predictLby(playerIndex, animstate)
+        finalSide = (AngleDifference(lbyAngle, eyeYaw) > 0) and 1 or -1
+        finalConfidence = features.lby
+    elseif features.jitter > 0.4 then
+        finalSide = (data.resolverData.side == 0) and 1 or -data.resolverData.side
+        finalConfidence = features.jitter
+    else
+        if HasOption(UiElements.advanced, "Bruteforce Cycle") then
+            finalSide = (data.resolverData.side == 0) and 1 or -data.resolverData.side
+            finalConfidence = 0.3
+        else
+            finalSide = data.resolverData.side
+            finalConfidence = 0.5
+        end
+    end
+
+    finalConfidence = finalConfidence * weightPrediction
+    local aggressiveness = 0.8
+    local confidenceThreshold = 0.4
+    if finalConfidence < confidenceThreshold then
+        aggressiveness = aggressiveness * (finalConfidence / confidenceThreshold)
+    end
+
+    local resolvedAngle = eyeYaw + (maxDesync * finalSide * aggressiveness)
+    resolvedAngle = NormalizeAngle(resolvedAngle)
+    local yawDifference = AngleDifference(resolvedAngle, eyeYaw)
+    yawDifference = Clamp(yawDifference, -maxDesync, maxDesync)
+
+    PlistSet(playerId, "Force body yaw", true)
+    PlistSet(playerId, "Force body yaw value", yawDifference)
+
+    data.resolverData.side = finalSide
+    data.resolverData.confidence = finalConfidence
+    data.resolverData.lastResolved = GlobalsTickCount()
+end
+
+function Resolver.processAll()
+    local currentTick = GlobalsTickCount()
+    if currentTick - Resolver.lastUpdate < Resolver.updateInterval then
+        return
+    end
+    local localPlayer = EntityGetLocalPlayer()
+    if not localPlayer or not EntityIsAlive(localPlayer) then
+        return
+    end
+    local enemies = EntityGetPlayers(true)
+    if not enemies then
+        return
+    end
+    for _, enemy in ipairs(enemies) do
+        if EntityIsAlive(enemy) and EntityIsEnemy(enemy) then
+            Resolver.resolve(enemy)
+        end
+    end
+    Resolver.lastUpdate = currentTick
+end
+
 local function PlayerWillPeek()
-	TABLE_TableIndirection[IVAN("\42\28\11\194\220\254\60\87\94", "\155\79\114\110\175\181")] = entity.get_players(true);
-	if not TABLE_TableIndirection[IVAN("\93\90\220\233\184\137\198\29\4", "\181\56\52\185\132\209\236")] then
-		return false;
-	end
-	TABLE_TableIndirection[IVAN("\62\67\209\169\73\153\246\51\85\215\186\0\249", "\154\82\44\178\200\37\201")] = entity.get_local_player();
-	if (not TABLE_TableIndirection[IVAN("\121\228\1\12\178\120\121\116\242\7\31\251\24", "\21\21\139\98\109\222\40")] or (3711 < 1008)) then
-		return false;
-	end
-	TABLE_TableIndirection[IVAN("\1\245\169\188\53\23\229\184\133\53\10\169\252", "\90\100\140\204\236")] = CreateVector3(client.eye_position());
-	TABLE_TableIndirection[IVAN("\160\27\61\205\187\46\169\24\49\207\190\12\181\81\110", "\120\204\116\94\172\215")] = CreateVector3(entity.get_prop(TABLE_TableIndirection[IVAN("\15\178\187\9\231\146\124\126\26\184\170\77\187", "\31\99\221\216\104\139\194\16")], IVAN("\56\159\252\9\10\213\48\172\229\15\0\247\44", "\131\85\192\138\108\105")));
-	TABLE_TableIndirection[IVAN("\38\182\122\7\63\167\107\10\57\170\75\10\59\161\58\83", "\99\86\196\31")] = TicksToTime(16);
-	TABLE_TableIndirection[IVAN("\64\38\74\249\86\164\27\85\48\106\228\90\151\0\67\61\91\244\80\169\74\0", "\111\48\84\47\157\63\199")] = CreateVector3(TABLE_TableIndirection[IVAN("\31\31\133\151\33\9\15\148\174\33\20\67\208", "\78\122\102\224\199")].x + (TABLE_TableIndirection[IVAN("\240\23\119\2\56\51\171\243\243\27\125\23\45\64\254", "\159\156\120\20\99\84\101\206")].x * TABLE_TableIndirection[IVAN("\108\3\137\123\193\66\99\46\115\31\184\118\197\68\50\119", "\71\28\113\236\31\168\33\23")]), TABLE_TableIndirection[IVAN("\72\231\38\200\214\202\50\179\68\241\45\189\137", "\199\45\158\67\152\185\185\91")].y + (TABLE_TableIndirection[IVAN("\86\118\190\175\220\32\210\220\85\122\180\186\201\83\135", "\176\58\25\221\206\176\118\183")].y * TABLE_TableIndirection[IVAN("\34\3\220\2\231\187\38\24\214\8\218\177\63\20\156\86", "\216\82\113\185\102\142")]), TABLE_TableIndirection[IVAN("\71\66\37\232\114\81\82\52\209\114\76\30\112", "\29\34\59\64\184")].z + (TABLE_TableIndirection[IVAN("\30\17\75\203\57\107\23\18\71\201\60\73\11\91\24", "\61\114\126\40\170\85")].z * TABLE_TableIndirection[IVAN("\220\58\114\61\202\112\216\33\120\55\247\122\193\45\50\105", "\19\172\72\23\89\163")]));
-	for i = 1, #TABLE_TableIndirection[IVAN("\50\82\202\232\60\87\182\114\12", "\197\87\60\175\133\85\50")] do
-		TABLE_TableIndirection[IVAN("\17\112\209\222\13\59\132", "\179\116\30\180")] = TABLE_TableIndirection[IVAN("\238\200\232\140\226\195\254\196\187", "\225\139\166\141")][i];
-		TABLE_TableIndirection[IVAN("\72\133\241\45\84\189\241\44\66\136\253\52\84\206\164", "\64\45\235\148")] = CreateVector3(entity.get_prop(TABLE_TableIndirection[IVAN("\115\95\63\239\69\144\38", "\181\22\49\90\130\60")], IVAN("\2\238\174\12\12\231\189\5\0\210\177\29\22", "\105\111\177\216")));
-		TABLE_TableIndirection[IVAN("\187\8\193\21\25\221\181\22\231\0\25\212\189\20\141\66", "\179\212\122\168\114\112")] = CreateVector3(entity.get_prop(TABLE_TableIndirection[IVAN("\124\116\129\192\96\63\212", "\173\25\26\228")], IVAN("\27\73\223\191\27\57\100\192\189\17\24", "\120\118\22\169\218")));
-		TABLE_TableIndirection[IVAN("\215\50\179\226\206\35\162\227\195\15\164\239\192\41\184\163\151", "\134\167\64\214")] = CreateVector3(TABLE_TableIndirection[IVAN("\11\155\247\143\192\198\5\133\209\154\192\207\13\135\187\216", "\168\100\233\158\232\169")].x + (TABLE_TableIndirection[IVAN("\119\90\28\241\107\98\28\240\125\87\16\232\107\17\73", "\156\18\52\121")].x * TABLE_TableIndirection[IVAN("\83\2\222\206\141\182\17\214\76\30\239\195\137\176\64\143", "\191\35\112\187\170\228\213\101")]), TABLE_TableIndirection[IVAN("\183\189\117\82\55\18\126\180\128\110\92\57\21\113\253\255", "\31\216\207\28\53\94\124")].y + (TABLE_TableIndirection[IVAN("\36\41\174\2\66\23\34\167\0\88\40\51\178\74\11", "\59\65\71\203\111")].y * TABLE_TableIndirection[IVAN("\7\178\121\112\130\15\32\30\175\114\64\130\1\49\82\240", "\84\119\192\28\20\235\108")]), TABLE_TableIndirection[IVAN("\131\236\45\241\19\50\168\77\163\236\45\241\19\50\236\17", "\33\236\158\68\150\122\92\201")].z + (TABLE_TableIndirection[IVAN("\229\214\252\20\80\199\60\236\215\250\16\93\232\124\176", "\89\128\184\153\121\41\145")].z * TABLE_TableIndirection[IVAN("\252\39\161\133\43\132\20\50\227\59\144\136\47\130\69\107", "\91\140\85\196\225\66\231\96")]));
-		entity.set_prop(TABLE_TableIndirection[IVAN("\54\182\178\188\82\118\232", "\43\83\216\215\209")], IVAN("\70\152\166\14\45\100\181\185\12\39\69", "\78\43\199\208\107"), TABLE_TableIndirection[IVAN("\98\154\5\26\178\57\209\211\118\167\18\23\188\51\203\147\34", "\182\18\232\96\126\219\90\165")].x, TABLE_TableIndirection[IVAN("\45\76\34\172\52\93\51\173\57\113\53\161\58\87\41\237\109", "\200\93\62\71")].y, TABLE_TableIndirection[IVAN("\86\95\75\222\205\177\26\67\73\97\200\205\181\7\72\8\30", "\110\38\45\46\186\164\210")].z);
-		TABLE_TableIndirection[IVAN("\112\187\169\18\14\119\173\161\2\55\119\176\237\70", "\94\24\222\200\118")] = CreateVector3(entity.hitbox_position(TABLE_TableIndirection[IVAN("\24\206\35\20\4\133\118", "\121\125\160\70")], 0));
-		TABLE_TableIndirection[IVAN("\227\248\62\182\250\233\47\183\247\194\62\179\247\218\52\161\250\254\50\189\253\175\107", "\210\147\138\91")] = CreateVector3(TABLE_TableIndirection[IVAN("\61\248\201\79\0\28\38\244\220\66\63\29\112\173", "\115\85\157\168\43\80")].x + (TABLE_TableIndirection[IVAN("\250\84\130\90\149\255\67\197\240\89\142\67\149\140\22", "\169\159\58\231\55\236\169\38")].x * TABLE_TableIndirection[IVAN("\1\211\186\20\205\23\104\24\206\177\36\205\25\121\84\145", "\28\113\161\223\112\164\116")]), TABLE_TableIndirection[IVAN("\206\93\70\125\107\201\75\78\109\82\201\86\2\41", "\59\166\56\39\25")].y + (TABLE_TableIndirection[IVAN("\183\214\195\197\90\132\221\202\199\64\187\204\223\141\19", "\35\210\184\166\168")].y * TABLE_TableIndirection[IVAN("\73\75\120\70\45\116\77\80\114\76\16\126\84\92\56\18", "\23\57\57\29\34\68")]), TABLE_TableIndirection[IVAN("\88\52\30\40\96\62\12\37\68\56\16\34\21\97", "\76\48\81\127")].z + (TABLE_TableIndirection[IVAN("\11\171\84\186\19\66\216\92\1\166\88\163\19\49\141", "\48\110\197\49\215\106\20\189")].z * TABLE_TableIndirection[IVAN("\13\0\77\168\201\40\82\5\18\28\124\165\205\46\3\92", "\108\125\114\40\204\160\75\38")]));
-		local _, damage = client.trace_bullet(TABLE_TableIndirection[IVAN("\57\127\252\12\57\64\243\12\44\117\237\72\101", "\109\85\16\159")], TABLE_TableIndirection[IVAN("\55\225\168\95\18\91\164\34\247\136\66\30\104\191\52\250\185\82\20\86\245\119", "\208\71\147\205\59\123\56")].x, TABLE_TableIndirection[IVAN("\71\50\129\188\94\35\144\189\83\5\157\189\103\47\151\177\67\41\139\182\18\112", "\216\55\64\228")].y, TABLE_TableIndirection[IVAN("\175\154\59\198\176\246\255\186\140\27\219\188\197\228\172\129\42\203\182\251\174\239", "\139\223\232\94\162\217\149")].z, TABLE_TableIndirection[IVAN("\197\145\38\245\178\86\222\208\135\11\244\186\81\250\218\144\42\229\178\90\196\144\211", "\170\181\227\67\145\219\53")].x, TABLE_TableIndirection[IVAN("\73\151\27\182\80\134\10\183\93\173\27\179\93\181\17\161\80\145\23\189\87\192\78", "\210\57\229\126")].y, TABLE_TableIndirection[IVAN("\168\33\239\162\59\198\151\189\55\194\163\51\193\179\183\32\227\178\59\202\141\253\99", "\227\216\83\138\198\82\165")].z);
-		entity.set_prop(TABLE_TableIndirection[IVAN("\46\187\179\117\235\110\229", "\146\75\213\214\24")], IVAN("\71\65\215\65\121\106\71\67\121\200\74", "\53\42\30\161\36\26\37"), TABLE_TableIndirection[IVAN("\242\235\254\231\244\247\246\236\210\235\254\231\244\247\178\176", "\128\157\153\151")].x, TABLE_TableIndirection[IVAN("\121\103\133\46\28\125\119\121\163\59\28\116\127\123\201\121", "\19\22\21\236\73\117")].y, TABLE_TableIndirection[IVAN("\120\215\171\174\254\179\44\250\88\215\171\174\254\179\104\166", "\150\23\165\194\201\151\221\77")].z);
-		if ((damage > 0) or (1049 <= 906)) then
-			return true;
-		end
-	end
-	return false;
+    local enemies = entity.get_players(true)
+    if not enemies then
+        return false
+    end
+    
+    local localPlayer = entity.get_local_player()
+    if not localPlayer then
+        return false
+    end
+    
+    local eyePosition = CreateVector3(client.eye_position())
+    local localVelocity = CreateVector3(entity.get_prop(localPlayer, "m_vecVelocity"))
+    local predictionTime = TicksToTime(16)
+    
+    local predictedEyePosition = CreateVector3(
+        eyePosition.x + localVelocity.x * predictionTime,
+        eyePosition.y + localVelocity.y * predictionTime,
+        eyePosition.z + localVelocity.z * predictionTime
+    )
+    
+    for i = 1, #enemies do
+        local enemy = enemies[i]
+        local enemyVelocity = CreateVector3(entity.get_prop(enemy, "m_vecVelocity"))
+        
+        local originalOrigin = CreateVector3(entity.get_prop(enemy, "m_vecOrigin"))
+        local predictedOrigin = CreateVector3(
+            originalOrigin.x + enemyVelocity.x * predictionTime,
+            originalOrigin.y + enemyVelocity.y * predictionTime,
+            originalOrigin.z + enemyVelocity.z * predictionTime
+        )
+        
+        entity.set_prop(enemy, "m_vecOrigin", predictedOrigin.x, predictedOrigin.y, predictedOrigin.z)
+        
+        local headPosition = CreateVector3(entity.hitbox_position(enemy, 0))
+        local predictedHeadPosition = CreateVector3(
+            headPosition.x + enemyVelocity.x * predictionTime,
+            headPosition.y + enemyVelocity.y * predictionTime,
+            headPosition.z + enemyVelocity.z * predictionTime
+        )
+        
+        local _, damage = client.trace_bullet(
+            localPlayer,
+            predictedEyePosition.x, predictedEyePosition.y, predictedEyePosition.z,
+            predictedHeadPosition.x, predictedHeadPosition.y, predictedHeadPosition.z
+        )
+        
+        entity.set_prop(enemy, "m_vecOrigin", originalOrigin.x, originalOrigin.y, originalOrigin.z)
+        
+        if damage > 0 then
+            return true
+        end
+    end
+    
+    return false
 end
+
 local function RunRecharge()
-	TABLE_TableIndirection[IVAN("\114\52\235\27\114\11\228\27\103\62\250\95\46", "\122\30\91\136")] = entity.get_local_player();
-	if not entity.is_alive(TABLE_TableIndirection[IVAN("\179\171\230\177\129\143\168\228\169\136\173\225\181", "\237\223\196\133\208")]) then
-		return;
-	end
-	TABLE_TableIndirection[IVAN("\203\13\194\174\81\244\153\88", "\154\188\104\163\222\62")] = entity.get_player_weapon(TABLE_TableIndirection[IVAN("\57\226\46\250\28\127\206\52\244\40\233\85\31", "\162\85\141\77\155\112\47")]);
-	if not TABLE_TableIndirection[IVAN("\5\44\167\94\29\39\227\30", "\46\114\73\198")] then
-		return;
-	end
-	TABLE_TableIndirection[IVAN("\150\125\100\230\62\94\137\123\119\228\29\94\170\110\51\191", "\42\197\30\22\143\78")] = (TABLE_TableIndirection[IVAN("\68\64\94\47\124\75\76\122\35", "\95\19\37\63")](TABLE_TableIndirection[IVAN("\102\41\166\236\126\9\52\124", "\103\17\76\199\156\17")]).is_revolver and 17) or 14;
-	if ((4513 > 2726) and (ui.get(TABLE_TableIndirection[IVAN("\129\40\131\240\110\21\191\233\246\122", "\154\211\74\229\136\60\112\217")].dt[2]) or ui.get(TABLE_TableIndirection[IVAN("\157\30\236\213\55\66\169\15\175\157", "\39\207\124\138\173\101")].hideShots[2]))) then
-		if ((TABLE_TableIndirection[IVAN("\233\13\76\194\163\194\18\119\201\161\197\34\76\213\172\218\68\19", "\194\174\97\35\160")]() >= (TABLE_TableIndirection[IVAN("\205\37\62\10\254\50\58\7\203\41\48\7\237\101\109", "\98\159\64\93")] + TABLE_TableIndirection[IVAN("\61\178\63\22\1\18\119\33\15\186\30\11\30\22\30\116", "\68\110\209\77\127\113\102\59")])) or (1481 >= 2658)) then
-			ui.set(TABLE_TableIndirection[IVAN("\156\230\161\87\49\198\168\189\161\247", "\206\206\132\199\47\99\163")].aimbot, true);
-		else
-			ui.set(TABLE_TableIndirection[IVAN("\196\192\209\106\99\243\196\196\55\1", "\49\150\162\183\18")].aimbot, false);
-		end
-	else
-		TABLE_TableIndirection[IVAN("\123\47\184\41\27\242\31\76\30\178\44\31\242\93\25", "\120\41\74\219\65\122\128")] = TABLE_TableIndirection[IVAN("\125\10\83\24\228\171\198\110\15\95\17\198\168\192\84\18\25\74", "\181\58\102\60\122\133\199")]();
-		ui.set(TABLE_TableIndirection[IVAN("\97\224\218\1\72\86\228\207\92\42", "\26\51\130\188\121")].aimbot, true);
-	end
+    local localPlayer = entity.get_local_player()
+    
+    if not entity.is_alive(localPlayer) then
+        return
+    end
+    
+    local weapon = entity.get_player_weapon(localPlayer)
+    if not weapon then
+        return
+    end
+    
+    ScriptLeakStop = Weapons(weapon).is_revolver and 17 or 14
+    
+    if ui.get(RbfxRefs.dt[2]) or ui.get(RbfxRefs.hideShots[2]) then
+        if GlobalsTickCount() >= RechargeTimer + ScriptLeakStop then
+            ui.set(RbfxRefs.aimbot, true)
+        else
+            ui.set(RbfxRefs.aimbot, false)
+        end
+    else
+        RechargeTimer = GlobalsTickCount()
+        ui.set(RbfxRefs.aimbot, true)
+    end
 end
-TABLE_TableIndirection[IVAN("\228\141\45\29\118\13\227\88\252\135\105\73", "\57\136\226\76\121\41\126\151")] = {[IVAN("\38\216\7\86", "\29\66\183\105\51\68\131")]=false,[IVAN("\68\41\89\198\68", "\174\37\69\41")]=0,[IVAN("\146\162\79\28\4\190\162\71\3\21", "\112\225\214\46\110")]=globals.curtime()};
-TABLE_TableIndirection[IVAN("\12\33\48\84\232\171\233\12\27\55\94\252\169\211\13\48\34\79\225\248\188", "\140\126\68\67\59\132\221")] = {[IVAN("\131\114\19\66\91\26", "\230\226\17\103\43\45\127")]=true,[IVAN("\209\64\212\67\134", "\231\176\44\164\43")]=0,[IVAN("\178\210\37\187\186\179\181\207\41\172", "\236\193\166\68\201\206")]=nil,[IVAN("\23\51\193\124\9\62\218\78\11\61\206\98\1\47", "\17\100\91\168")]=0,[IVAN("\86\175\138\248\140\51\105\85\161\158\233\160\48", "\27\58\198\236\140\211\67")]=0};
+
+local load_state = {
+    done = false,
+    alpha = 0,
+    start_time = globals.curtime()
+}
+local resolver_text_state = {
+    active = true,
+    alpha = 0,
+    start_time = nil,
+    shimmer_offset = 0,
+    lift_progress = 0
+}
 local function lerp(a, b, t)
-	t = ((t < 0) and 0) or ((t > 1) and 1) or t;
-	return a + ((b - a) * t);
+    t = t < 0 and 0 or (t > 1 and 1 or t)
+    return a + (b - a) * t
 end
 local function ease_out_cubic(t)
-	return 1 - ((1 - t) ^ 3);
+    return 1 - (1 - t)^3
 end
 local function intro()
-	if not TABLE_TableIndirection[IVAN("\45\194\205\78\182\248\53\204\216\79\204\187", "\139\65\173\172\42\233")].done then
-		TABLE_TableIndirection[IVAN("\130\90\112\200\215\114\228\13\215", "\40\231\54\17\184\164\23\128")] = globals.curtime() - TABLE_TableIndirection[IVAN("\136\198\126\252\186\249\144\200\107\253\192\186", "\138\228\169\31\152\229")].start_time;
-		if ((TABLE_TableIndirection[IVAN("\201\0\67\37\243\198\200\73\18", "\163\172\108\34\85\128")] < 1) or (3220 == 1364)) then
-			TABLE_TableIndirection[IVAN("\43\30\246\131\228\87\156\85\51\20\178\215", "\52\71\113\151\231\187\36\232")].alpha = math.min(1, TABLE_TableIndirection[IVAN("\115\129\121\189\101\136\124\232\38", "\205\22\237\24")] * 2);
-		elseif ((TABLE_TableIndirection[IVAN("\187\116\114\216\42\187\124\54\152", "\89\222\24\19\168")] < 2) or (1054 > 3392)) then
-			TABLE_TableIndirection[IVAN("\249\86\82\179\46\230\77\82\163\20\176\9", "\113\149\57\51\215")].alpha = 1;
-		else
-			TABLE_TableIndirection[IVAN("\117\127\202\178\221\211\109\113\223\179\167\144", "\160\25\16\171\214\130")].alpha = math.max(0, 1 - ((TABLE_TableIndirection[IVAN("\116\212\54\109\110\215\143\52\136", "\235\17\184\87\29\29\178")] - 2) * 2));
-			if (TABLE_TableIndirection[IVAN("\175\165\120\232\227\175\173\60\168", "\144\202\201\25\152")] <= 2.5) then
-			else
-				TABLE_TableIndirection[IVAN("\53\212\5\122\196\89\243\1\45\222\65\46", "\96\89\187\100\30\155\42\135")].done = true;
-				TABLE_TableIndirection[IVAN("\63\200\16\69\118\107\40\223\60\94\127\101\57\242\16\94\123\105\40\136\83", "\29\77\173\99\42\26")].active = true;
-				TABLE_TableIndirection[IVAN("\150\231\20\117\87\249\242\31\187\246\2\98\79\208\228\25\133\246\2\63\11", "\109\228\130\103\26\59\143\151")].start_time = globals.curtime();
-				TABLE_TableIndirection[IVAN("\145\125\189\214\50\92\42\150\188\108\171\193\42\117\60\144\130\108\171\156\110", "\228\227\24\206\185\94\42\79")].lift_progress = 0;
-				return;
-			end
-		end
-		if ((TABLE_TableIndirection[IVAN("\194\45\54\172\139\8\36\207\54\50\237\228", "\80\174\66\87\200\212\123")].alpha > 0) or (676 >= 1642)) then
-			local w, h = client.screen_size();
-			renderer.rectangle(0, 0, w, h, 0, 0, 0, TABLE_TableIndirection[IVAN("\199\118\63\204\200\0\223\120\42\205\178\67", "\115\171\25\94\168\151")].alpha * 180);
-			local center_x, center_y = w / 2, h / 2;
-			TABLE_TableIndirection[IVAN("\30\179\224\40\226\31\247\180", "\151\108\210\132\65")] = 17;
-			TABLE_TableIndirection[IVAN("\204\92\0\75\205\79\194\71\203\17\89", "\52\184\52\105\40\166\33\167")] = 4;
-			TABLE_TableIndirection[IVAN("\83\13\206\173\52\192\195\91\5\136\248", "\172\50\110\173\200\90\180")] = TABLE_TableIndirection[IVAN("\203\175\253\9\171", "\44\155\218\148")].reference(IVAN("\224\242\63\56", "\209\141\155\76\91\180\71"), IVAN("\224\120\203\95\19\253\122\204", "\122\147\29\191\43"), IVAN("\177\213\80\28\154\252\131\114\179\194", "\30\220\176\62\105\186\159\236")).value;
-			local r, g, b = unpack(TABLE_TableIndirection[IVAN("\137\222\134\181\56\193\184\180\131\152\213", "\221\232\189\229\208\86\181\215")]);
-			TABLE_TableIndirection[IVAN("\30\187\224\221\58\5\187\250\153\126", "\78\108\212\148\188")] = (globals.curtime() * 180) % 360;
-			renderer.circle_outline(center_x, center_y, r, g, b, TABLE_TableIndirection[IVAN("\55\31\21\38\211\19\175\59\47\21\81\114", "\90\91\112\116\66\140\96\219")].alpha * 255, TABLE_TableIndirection[IVAN("\215\86\14\5\245\187\65\149", "\100\165\55\106\108\128\200")], TABLE_TableIndirection[IVAN("\215\196\37\178\209\194\62\189\128\155", "\211\165\171\81")], 0.75, TABLE_TableIndirection[IVAN("\16\125\219\201\220\210\1\102\193\143\135", "\188\100\21\178\170\183")]);
-			TABLE_TableIndirection[IVAN("\106\18\72\167\161\136\46", "\173\30\119\48\211\210")] = IVAN("\90\202\42\63\86\219\53\35\27\203\60\41\84\213\47\63\73", "\90\59\185\89");
-			local text_w, text_h = renderer.measure_text(nil, TABLE_TableIndirection[IVAN("\84\245\66\91\40\56\16", "\29\32\144\58\47\91")]);
-			renderer.text((w / 2) - (text_w / 2), center_y + TABLE_TableIndirection[IVAN("\1\52\117\180\84\178\86\101", "\193\115\85\17\221\33")] + 15, 255, 255, 255, TABLE_TableIndirection[IVAN("\225\116\15\26\144\207\249\122\26\27\234\140", "\188\141\27\110\126\207")].alpha * 255, "b", 0, TABLE_TableIndirection[IVAN("\153\51\70\99\247\173\89", "\105\237\86\62\23\132\136")]);
-		end
-	end
-	if TABLE_TableIndirection[IVAN("\181\70\61\73\28\14\173\72\40\72\102\77", "\125\217\41\92\45\67")].done then
-		TABLE_TableIndirection[IVAN("\75\177\21\80\143\77\92\166\57\75\134\67\77\139\21\75\130\79\92\241\86", "\59\57\212\102\63\227")].active = true;
-		if ((4136 > 2397) and (TABLE_TableIndirection[IVAN("\111\237\108\8\113\254\122\21\66\252\122\31\105\215\108\19\124\252\122\66\45", "\103\29\136\31")].start_time == nil)) then
-			TABLE_TableIndirection[IVAN("\12\43\201\37\74\8\43\200\21\82\27\54\206\21\85\10\47\206\47\3\78", "\38\126\78\186\74")].start_time = globals.curtime();
-		end
-	else
-		TABLE_TableIndirection[IVAN("\211\69\57\133\75\146\196\82\21\158\66\156\213\127\57\158\70\144\196\5\122", "\228\161\32\74\234\39")].active = false;
-	end
-	if TABLE_TableIndirection[IVAN("\44\129\25\186\252\151\49\146\1\144\15\173\228\190\39\148\63\144\15\240\160", "\224\94\228\106\213\144\225\84")].active then
-		TABLE_TableIndirection[IVAN("\181\228\70\208\18\181\236\2\144", "\97\208\136\39\160")] = globals.curtime() - TABLE_TableIndirection[IVAN("\228\44\208\137\85\4\62\228\22\215\131\65\6\4\229\61\194\146\92\87\107", "\91\150\73\163\230\57\114")].start_time;
-		if (TABLE_TableIndirection[IVAN("\75\161\179\70\227\14\186\26\30", "\63\46\205\210\54\144\107\222")] < 1.5) then
-			TABLE_TableIndirection[IVAN("\226\41\231\72\208\230\41\230\120\200\245\52\224\120\207\228\45\224\66\153\160", "\188\144\76\148\39")].alpha = math.min(1, TABLE_TableIndirection[IVAN("\128\71\116\180\95\9\38\16\213", "\53\229\43\21\196\44\108\66")] / 1.5);
-		else
-			TABLE_TableIndirection[IVAN("\33\48\4\170\63\35\18\183\12\33\18\189\39\10\4\177\50\33\18\224\99", "\197\83\85\119")].alpha = 1;
-		end
-		TABLE_TableIndirection[IVAN("\67\243\24\35\112\254\11\37\78\238\23\56\65\191\78", "\87\47\154\126")] = 1;
-		TABLE_TableIndirection[IVAN("\57\125\223\212\222\194\46\106\243\207\215\204\63\71\223\207\211\192\46\61\156", "\180\75\24\172\187\178")].lift_progress = math.min(1, TABLE_TableIndirection[IVAN("\198\213\228\19\111\33\253\85\147", "\112\163\185\133\99\28\68\153")] / TABLE_TableIndirection[IVAN("\167\93\250\223\148\80\233\217\170\64\245\196\165\17\172", "\171\203\52\156")]);
-		TABLE_TableIndirection[IVAN("\182\195\123\165\21\135\188\163\174\197\111\244\122", "\192\218\170\29\209\74\225\221")] = ease_out_cubic(TABLE_TableIndirection[IVAN("\145\217\72\15\195\91\44\239\188\200\94\24\219\114\58\233\130\200\94\69\159", "\157\227\188\59\96\175\45\73")].lift_progress);
-		TABLE_TableIndirection[IVAN("\179\195\209\2\14\176\204\209\5\52\171\143\135", "\81\223\170\183\118")] = (1 - TABLE_TableIndirection[IVAN("\42\72\170\175\198\52\16\37\85\163\169\188\98", "\113\70\33\204\219\153\82")]) * 30;
-		if (TABLE_TableIndirection[IVAN("\227\135\44\51\242\166\244\144\0\40\251\168\229\189\44\40\255\164\244\199\111", "\208\145\226\95\92\158")].alpha <= 0) then
-		else
-			local w, h = client.screen_size();
-			TABLE_TableIndirection[IVAN("\174\243\216\74\230\237\234\72", "\120\222\129\189\44\143\149\207")] = IVAN("\165\34\46\148\231\105\85\129", "\216\228\113\125\209\170\43\25");
-			TABLE_TableIndirection[IVAN("\248\232\74\74\101\59\169", "\30\153\154\56\37\18")] = IVAN("\93\249\183", "\91\125\217\151\108");
-			TABLE_TableIndirection[IVAN("\234\6\160\118\215\225\86\246", "\190\153\115\198\16")] = TABLE_TableIndirection[IVAN("\27\104\185\130\55\121\166\158\15\104\175\149\30\122\190\134\127\43", "\231\90\27\202")].role:upper();
-			TABLE_TableIndirection[IVAN("\135\139\86\182\27\209", "\62\225\228\56\194")] = "-";
-			TABLE_TableIndirection[IVAN("\20\184\170\40\75\76\83\233", "\53\118\217\217\77\20")] = h - 40;
-			TABLE_TableIndirection[IVAN("\176\90\180", "\79\201\127\132\190")] = TABLE_TableIndirection[IVAN("\42\21\250\204\23\13\172\153", "\169\72\116\137")] + TABLE_TableIndirection[IVAN("\117\115\207\178\70\117\207\160\106\127\221\227\41", "\198\25\26\169")];
-			TABLE_TableIndirection[IVAN("\89\97\216\32\142\73\68\104\12\35", "\31\41\19\189\70\231\49\27")] = renderer.measure_text(TABLE_TableIndirection[IVAN("\177\220\95\242\242\131", "\134\215\179\49")], TABLE_TableIndirection[IVAN("\241\230\83\224\92\11\164\164", "\115\129\148\54\134\53")]);
-			TABLE_TableIndirection[IVAN("\232\149\66\68\207\55\4\172\215", "\115\137\231\48\43\184\104")] = renderer.measure_text(TABLE_TableIndirection[IVAN("\223\230\20\247\236\240", "\95\185\137\122\131\201\192")], TABLE_TableIndirection[IVAN("\119\36\213\28\50\51\102", "\69\22\86\167\115")]);
-			TABLE_TableIndirection[IVAN("\75\145\65\135\76\63\103\147\2\209", "\71\56\228\39\225\37")] = renderer.measure_text(TABLE_TableIndirection[IVAN("\182\238\234\61\191\189", "\66\208\129\132\73\154\141")], TABLE_TableIndirection[IVAN("\89\74\208\251\67\71\147\173", "\157\42\63\182")]);
-			TABLE_TableIndirection[IVAN("\207\49\61\253\195\228\41\32\248\219\211\123\121", "\175\187\94\73\156")] = TABLE_TableIndirection[IVAN("\54\45\74\38\18\59\255\49\122\31", "\160\70\95\47\64\123\67")] + TABLE_TableIndirection[IVAN("\223\72\102\62\201\101\99\116\142", "\81\190\58\20")] + TABLE_TableIndirection[IVAN("\95\88\176\113\138\49\96\36\9\29", "\83\44\45\214\23\227\73\63")];
-			TABLE_TableIndirection[IVAN("\237\133\85\170\33\231\174\3\238", "\64\149\218\38\222")] = (w / 2) - (TABLE_TableIndirection[IVAN("\14\168\222\209\22\152\221\217\30\179\194\149\74", "\176\122\199\170")] / 2);
-			TABLE_TableIndirection[IVAN("\19\8\179\213\63\63\29\2\187\149\97", "\75\114\107\208\176\81")] = TABLE_TableIndirection[IVAN("\201\62\32\48\169", "\21\153\75\73")].reference(IVAN("\4\26\94\241", "\38\105\115\45\146\210"), IVAN("\17\19\24\98\58\12\17\31", "\83\98\118\108\22"), IVAN("\68\238\119\56\229\135\44\69\228\107", "\67\41\139\25\77\197\228")).value;
-			local ar, ag, ab = unpack(TABLE_TableIndirection[IVAN("\233\173\205\47\88\252\231\167\197\111\6", "\136\136\206\174\74\54")]);
-			local br, bg, bb = 255, 255, 255;
-			TABLE_TableIndirection[IVAN("\35\225\135\156\22\244", "\219\68\147\230\229\51\196")] = {134,134,134};
-			TABLE_TableIndirection[IVAN("\111\94\243\229\2\120\11\100\113\230\229\20\120\8\121\77\179\176", "\123\28\46\150\128\102\39")] = 110;
-			TABLE_TableIndirection[IVAN("\6\80\30\91\30\182\43\116\1\77\20\89\28\204\107", "\21\101\41\125\55\123\233\91")] = 45;
-			TABLE_TableIndirection[IVAN("\133\231\161\228\51\37\139\239\186\251\73\98", "\82\226\139\206\147\108")] = 120;
-			TABLE_TableIndirection[IVAN("\242\31\78\189\201\206\10\72\191\203\229\14\8\225", "\172\145\102\45\209")] = TABLE_TableIndirection[IVAN("\224\2\24\65\135\65\227\4\8\84\131\59\164", "\30\148\109\108\32\235")] + TABLE_TableIndirection[IVAN("\19\75\30\72\43\80\24\91\0\79\84\15", "\63\116\39\113")] + TABLE_TableIndirection[IVAN("\59\73\196\224\21\23\184\57\84\195\229\30\47\237\104", "\200\88\48\167\140\112\72")];
-			TABLE_TableIndirection[IVAN("\208\91\59\164\238\212\91\58\148\246\199\70\60\148\241\214\95\60\174\167\146", "\130\162\62\72\203")].shimmer_offset = (TABLE_TableIndirection[IVAN("\177\178\174\127\139\150\234\239\156\163\184\104\147\191\252\233\162\163\184\53\215", "\157\195\215\221\16\231\224\143")].shimmer_offset + (TABLE_TableIndirection[IVAN("\108\201\14\137\231\64\201\19\179\243\122\203\52\159\230\124\156\91", "\131\31\185\107\236")] * globals.frametime())) % TABLE_TableIndirection[IVAN("\168\178\73\40\174\148\70\33\165\172\94\44\238\251", "\68\203\203\42")];
-			TABLE_TableIndirection[IVAN("\80\95\124\212\78\82\103\230\64\82\123\205\70\69\48\137", "\185\35\55\21")] = (TABLE_TableIndirection[IVAN("\171\198\172\144\178\235\171\193\227", "\228\211\153\223")] - (TABLE_TableIndirection[IVAN("\83\227\87\42\5\17\93\235\76\53\127\86", "\102\52\143\56\93\90")] / 2)) + TABLE_TableIndirection[IVAN("\84\18\179\39\233\80\18\178\23\241\67\15\180\23\246\82\22\180\45\160\22", "\133\38\119\192\72")].shimmer_offset;
-			TABLE_TableIndirection[IVAN("\239\228\36", "\155\151\193\20")] = TABLE_TableIndirection[IVAN("\54\155\19\90\122\60\176\69\30", "\27\78\196\96\46")];
-			for i = 1, #TABLE_TableIndirection[IVAN("\250\233\183\190\115\92\9\186", "\44\138\155\210\216\26\36")] do
-				TABLE_TableIndirection[IVAN("\184\69\184\72\184\235", "\157\219\45\217\58")] = TABLE_TableIndirection[IVAN("\160\175\51\211\247\168\248\102", "\158\208\221\86\181")]:sub(i, i);
-				TABLE_TableIndirection[IVAN("\227\86\175\91", "\88\128\33\138\107\64\223")] = renderer.measure_text(TABLE_TableIndirection[IVAN("\199\253\123\97\232\43", "\142\161\146\21\21\205\27")], TABLE_TableIndirection[IVAN("\19\242\125\17\95\169", "\172\112\154\28\99\122\153")]);
-				TABLE_TableIndirection[IVAN("\200\255\161\12\244\244\165\16\223\242\178\91\155", "\126\171\151\192")] = TABLE_TableIndirection[IVAN("\38\91\169", "\57\94\126\153\124\103\154")] + (TABLE_TableIndirection[IVAN("\20\208\12\73", "\33\119\167\41\121\182")] * 0.5);
-				TABLE_TableIndirection[IVAN("\67\189\40\66\238\3", "\88\39\212\91\54\203\51\124")] = math.abs(TABLE_TableIndirection[IVAN("\47\164\181\152\68\205\205\34\184\177\152\62\158", "\168\76\204\212\234\27\174")] - TABLE_TableIndirection[IVAN("\159\12\58\73\4\227\92\179\7\54\74\29\227\92\201\84", "\46\236\100\83\36\105\134")]);
-				TABLE_TableIndirection[IVAN("\45\191\215", "\111\89\154\231\224\225")] = 1 - math.min(1, TABLE_TableIndirection[IVAN("\249\211\21\177\105\169", "\177\157\186\102\197\76\153\188")] / (TABLE_TableIndirection[IVAN("\165\178\47\184\157\169\41\171\182\182\101\255", "\207\194\222\64")] * 0.5));
-				TABLE_TableIndirection[IVAN("\9\48\135", "\179\123\21\183\32\232")] = lerp(br, ar, TABLE_TableIndirection[IVAN("\210\102\156", "\98\166\67\172\93\211")]);
-				TABLE_TableIndirection[IVAN("\224\166\135", "\130\135\131\183\181\98\42")] = lerp(bg, ag, TABLE_TableIndirection[IVAN("\215\243\107", "\64\163\214\91\131")]);
-				TABLE_TableIndirection[IVAN("\19\106\72", "\95\113\79\120\86")] = lerp(bb, ab, TABLE_TableIndirection[IVAN("\191\177\112", "\169\203\148\64\208\230\109\95")]);
-				TABLE_TableIndirection[IVAN("\201\82\86", "\134\168\119\102\210\74\123\92")] = TABLE_TableIndirection[IVAN("\185\11\15\86\167\24\25\75\148\26\25\65\191\49\15\77\170\26\25\28\251", "\57\203\110\124")].alpha * 255;
-				renderer.text(TABLE_TableIndirection[IVAN("\182\150\69", "\96\206\179\117\73")], TABLE_TableIndirection[IVAN("\152\102\39", "\69\225\67\23")], TABLE_TableIndirection[IVAN("\214\196\99", "\27\164\225\83\213\188\227\185")], TABLE_TableIndirection[IVAN("\143\74\210", "\167\232\111\226\158")], TABLE_TableIndirection[IVAN("\70\97\127", "\209\36\68\79\120\123\61\144")], TABLE_TableIndirection[IVAN("\77\164\3", "\96\44\129\51\91")], TABLE_TableIndirection[IVAN("\19\0\2\178\182\184", "\147\117\111\108\198\147\136")], 0, TABLE_TableIndirection[IVAN("\9\190\195\70\79\230", "\52\106\214\162")]);
-				TABLE_TableIndirection[IVAN("\29\74\142", "\145\101\111\190\196")] = TABLE_TableIndirection[IVAN("\72\136\209", "\47\48\173\225\140")] + TABLE_TableIndirection[IVAN("\64\218\196\136", "\204\35\173\225\184\75")];
-			end
-			renderer.text(TABLE_TableIndirection[IVAN("\246\1\179", "\110\142\36\131\237\134\198")], TABLE_TableIndirection[IVAN("\98\5\227", "\88\27\32\211\144")], TABLE_TableIndirection[IVAN("\138\185\191\37\142\253", "\16\237\203\222\92\171\205\59")][1], TABLE_TableIndirection[IVAN("\230\163\188\145\90\227", "\211\129\209\221\232\127")][2], TABLE_TableIndirection[IVAN("\14\93\71\61\185\77", "\38\105\47\38\68\156\125\208")][3], TABLE_TableIndirection[IVAN("\158\133\182\75\240\62\137\146\154\80\249\48\152\191\182\80\253\60\137\197\245", "\72\236\224\197\36\156")].alpha * 255, TABLE_TableIndirection[IVAN("\194\164\74\158\129\251", "\234\164\203\36")], 0, TABLE_TableIndirection[IVAN("\10\255\146\45\155\27\33", "\18\107\141\224\66\236\62\17")]);
-			x = TABLE_TableIndirection[IVAN("\179\234\76", "\151\203\207\124")] + TABLE_TableIndirection[IVAN("\213\8\227\13\247\182\9\129\132", "\164\180\122\145\98\128\233\126")];
-			for i = 1, #TABLE_TableIndirection[IVAN("\168\17\29\203\178\28\94\157", "\173\219\100\123")] do
-				TABLE_TableIndirection[IVAN("\183\32\77\25\86\228", "\115\212\72\44\107")] = TABLE_TableIndirection[IVAN("\159\250\82\116\244\54\235\20", "\36\236\143\52\18\157\78\206")]:sub(i, i);
-				TABLE_TableIndirection[IVAN("\83\86\125\31", "\159\48\33\88\47")] = renderer.measure_text(TABLE_TableIndirection[IVAN("\25\77\23\230\246\177", "\87\127\34\121\146\211\129\87")], TABLE_TableIndirection[IVAN("\168\233\132\254\96\110", "\20\203\129\229\140\69\94\175")]);
-				TABLE_TableIndirection[IVAN("\172\206\85\36\208\225\170\200\64\51\253\167\255", "\130\207\166\52\86\143")] = x + (TABLE_TableIndirection[IVAN("\73\77\86\189", "\65\42\58\115\141\202\27")] * 0.5);
-				TABLE_TableIndirection[IVAN("\79\13\70\213\106\27", "\79\43\100\53\161")] = math.abs(TABLE_TableIndirection[IVAN("\243\204\206\93\107\79\51\74\228\193\221\10\4", "\36\144\164\175\47\52\44\86")] - TABLE_TableIndirection[IVAN("\35\7\242\169\114\53\29\196\167\122\62\27\254\182\58\96", "\31\80\111\155\196")]);
-				TABLE_TableIndirection[IVAN("\71\28\177", "\79\51\57\129\180")] = 1 - math.min(1, TABLE_TableIndirection[IVAN("\51\187\35\76\156\103", "\185\87\210\80\56")] / (TABLE_TableIndirection[IVAN("\193\28\161\79\66\238\92\194\4\166\29\45", "\53\166\112\206\56\29\153")] * 0.5));
-				TABLE_TableIndirection[IVAN("\96\86\6", "\79\18\115\54\106\149")] = lerp(br, ar, TABLE_TableIndirection[IVAN("\94\23\30", "\198\42\50\46\62\69\29\237")]);
-				TABLE_TableIndirection[IVAN("\197\255\70", "\59\162\218\118\89\72\192\110")] = lerp(bg, ag, TABLE_TableIndirection[IVAN("\145\187\224", "\97\229\158\208\63\40\97\18")]);
-				TABLE_TableIndirection[IVAN("\47\139\34", "\236\77\174\18\38")] = lerp(bb, ab, TABLE_TableIndirection[IVAN("\148\24\159", "\117\224\61\175")]);
-				TABLE_TableIndirection[IVAN("\234\2\150", "\232\139\39\166")] = TABLE_TableIndirection[IVAN("\241\84\64\74\123\212\230\67\108\81\114\218\247\110\64\81\118\214\230\20\3", "\162\131\49\51\37\23")].alpha * 255;
-				renderer.text(x, TABLE_TableIndirection[IVAN("\70\60\174", "\20\63\25\158\74")], TABLE_TableIndirection[IVAN("\104\159\12", "\217\26\186\60\205\31\176\72")], TABLE_TableIndirection[IVAN("\220\52\86", "\140\187\17\102")], TABLE_TableIndirection[IVAN("\46\206\244", "\33\76\235\196")], TABLE_TableIndirection[IVAN("\9\175\162", "\229\104\138\146\63\204\80\229")], TABLE_TableIndirection[IVAN("\166\114\16\221\229\45", "\169\192\29\126")], 0, TABLE_TableIndirection[IVAN("\50\205\4\153\116\149", "\235\81\165\101")]);
-				x = x + TABLE_TableIndirection[IVAN("\123\147\26\73", "\172\24\228\63\121\229\100")];
-			end
-		end
-	end
+        if not load_state.done then
+            local elapsed = globals.curtime() - load_state.start_time
+            if elapsed < 1 then
+                load_state.alpha = math.min(1, elapsed * 2)
+            elseif elapsed < 2 then
+                load_state.alpha = 1
+            else
+                load_state.alpha = math.max(0, 1 - (elapsed - 2) * 2)
+                if elapsed > 2.5 then
+                    load_state.done = true
+                    resolver_text_state.active = true
+                    resolver_text_state.start_time = globals.curtime()
+                    resolver_text_state.lift_progress = 0
+                    return
+                end
+            end
+            if load_state.alpha > 0 then
+                local w, h = client.screen_size()
+                renderer.rectangle(0, 0, w, h, 0, 0, 0, load_state.alpha * 180)
+                local center_x, center_y = w / 2, h / 2
+                local radius = 17
+                local thickness = 4
+                local accentoik = Pui.reference('misc', 'settings', 'menu color').value
+                local r, g, b = unpack(accentoik)
+                local rotation = (globals.curtime() * 180) % 360
+                renderer.circle_outline(
+                    center_x, center_y,
+                    r, g, b, load_state.alpha * 255,
+                    radius, rotation, 0.75, thickness
+                )
+                local texts = "assembly resolver"
+                local text_w, text_h = renderer.measure_text(nil, texts)
+                renderer.text(w / 2 - text_w / 2, center_y + radius + 15, 255, 255, 255, load_state.alpha * 255, "b", 0, texts)
+            end
+        end
+        if load_state.done then
+            resolver_text_state.active = true
+            if resolver_text_state.start_time == nil then
+                resolver_text_state.start_time = globals.curtime()
+            end
+        else
+            resolver_text_state.active = false
+        end
+        if resolver_text_state.active then
+            local elapsed = globals.curtime() - resolver_text_state.start_time
+            if elapsed < 1.5 then
+                resolver_text_state.alpha = math.min(1, elapsed / 1.5)
+            else
+                resolver_text_state.alpha = 1
+            end
+            local lift_duration = 1
+            resolver_text_state.lift_progress = math.min(1, elapsed / lift_duration)
+            local lift_factor = ease_out_cubic(resolver_text_state.lift_progress)
+            local lift_offset = (1 - lift_factor) * 30
+            if resolver_text_state.alpha > 0 then
+                local w, h = client.screen_size()
+                local prefix = "ASSEMBLY"
+                local arrow = "   "
+                local suffix = AssemblyUserData.role:upper()
+                local font = "-"
+                local base_y = h - 40
+                local y = base_y + lift_offset
+                local prefix_w = renderer.measure_text(font, prefix)
+                local arrow_w = renderer.measure_text(font, arrow)
+                local suffix_w = renderer.measure_text(font, suffix)
+                local total_width = prefix_w + arrow_w + suffix_w
+                local x_start = w / 2 - total_width / 2
+                local accentoik = Pui.reference('misc', 'settings', 'menu color').value
+                local ar, ag, ab = unpack(accentoik)
+                local br, bg, bb = 255, 255, 255
+                local gray = {134, 134, 134}
+                local speed_px_per_sec = 110
+                local cycle_padding = 45
+                local glow_width = 120
+                local cycle_length = total_width + glow_width + cycle_padding
+                resolver_text_state.shimmer_offset = (resolver_text_state.shimmer_offset + speed_px_per_sec * globals.frametime()) % cycle_length
+                local shimmer_center = x_start - glow_width / 2 + resolver_text_state.shimmer_offset
+                local x = x_start
+                for i = 1, #prefix do
+                    local char = prefix:sub(i, i)
+                    local cw = renderer.measure_text(font, char)
+                    local char_center = x + cw * 0.5
+                    local dist = math.abs(char_center - shimmer_center)
+                    local t = 1 - math.min(1, dist / (glow_width * 0.5))
+                    local r = lerp(br, ar, t)
+                    local g = lerp(bg, ag, t)
+                    local b = lerp(bb, ab, t)
+                    local a = resolver_text_state.alpha * 255
+                    renderer.text(x, y, r, g, b, a, font, 0, char)
+                    x = x + cw
+                end
+                renderer.text(x, y, gray[1], gray[2], gray[3], resolver_text_state.alpha * 255, font, 0, arrow)
+                x = x + arrow_w
+                for i = 1, #suffix do
+                    local char = suffix:sub(i, i)
+                    local cw = renderer.measure_text(font, char)
+                    local char_center = x + cw * 0.5
+                    local dist = math.abs(char_center - shimmer_center)
+                    local t = 1 - math.min(1, dist / (glow_width * 0.5))
+                    local r = lerp(br, ar, t)
+                    local g = lerp(bg, ag, t)
+                    local b = lerp(bb, ab, t)
+                    local a = resolver_text_state.alpha * 255
+                    renderer.text(x, y, r, g, b, a, font, 0, char)
+                    x = x + cw
+                end
+            end
+        end
 end
+
 local function FixRagebot()
-	print(IVAN("\152\79\210\200\136\71\218\217\172\103\237\245\178\118\237\245\178\104\149\237\133\79\209\203\131\70\222\194\128\72\221\201\129\68\221\201\140\68\217\141\170\79\198\222\143\75\216\207\134\87\210\222\202\110\212\222\153\75\216\207\134\87\210\222", "\173\234\46\181"));
-	TABLE_TableIndirection[IVAN("\221\39\237\57\38\205\119\187", "\67\191\82\139\95")] = TABLE_TableIndirection[IVAN("\27\235\78\135\188", "\139\93\141\39\162\140")].new(IVAN("\47\171\8\197\37\115\158", "\126\76\195\105\183"), 29);
-	TABLE_TableIndirection[IVAN("\80\90\173\118\80\186\94\68\134\104\77\177\76\13\244", "\212\63\40\196\17\57")] = TABLE_TableIndirection[IVAN("\143\205\249\191\249", "\154\201\171\144")].new(IVAN("\129\230\169\223\141\80\130", "\221\226\142\200\173\214\111\223"), 29);
-	TABLE_TableIndirection[IVAN("\3\75\178\62\186\23\126\171\35\237\94", "\200\110\46\223\81")] = TABLE_TableIndirection[IVAN("\48\65\53\113\114", "\34\118\39\92\84\66\178")].cast(IVAN("\72\128\48\16\100", "\19\43\232\81\98\78\201\175"), 1127923787);
-	TABLE_TableIndirection[IVAN("\109\213\241\227\148", "\234\43\179\152\198\164\141")].copy(TABLE_TableIndirection[IVAN("\170\72\117\217\142\189\204\139\135\67\104\219\148\246\157", "\231\197\58\28\190\231\211\173")], TABLE_TableIndirection[IVAN("\94\215\51\35\197\149\99\198\44\105\135", "\236\51\178\94\76\183")], 29);
-	TABLE_TableIndirection[IVAN("\204\203\219\6\186", "\35\138\173\178")].copy(TABLE_TableIndirection[IVAN("\195\22\78\218\87\111\132\83", "\29\161\99\40\188\50")], TABLE_TableIndirection[IVAN("\118\56\169\224\7\52\11\224\91\51\180\226\29\127\90", "\140\25\74\192\135\110\90\106")], 29);
-	TABLE_TableIndirection[IVAN("\4\87\77\183\250", "\194\66\49\36\146\202")].fill(TABLE_TableIndirection[IVAN("\137\36\203\4\192\153\116\157", "\165\235\81\173\98")], 24, 144);
-	TABLE_TableIndirection[IVAN("\41\144\175\48\188\246\110\213", "\132\75\229\201\86\217")][24] = 233;
-	TABLE_TableIndirection[IVAN("\139\97\132\181\146\126\172\160\134\55\245", "\197\226\18\197")] = false;
-	TABLE_TableIndirection[IVAN("\63\221\8\84\18\197\50\84\8\244\23\84\18\197\34\80\16\221\3\80\31\218\68\1", "\49\124\177\97")](IVAN("\147\56\212\171\144\2\195\177\141\48\193\176\132", "\222\224\93\160"), function(cmd)
-		TABLE_TableIndirection[IVAN("\248\245\125\52\52\239\220\98\49\52\242\184\34", "\88\139\157\18\65")] = TABLE_TableIndirection[IVAN("\127\19\53\20\223\15\74", "\171\42\122\114\113")](TABLE_TableIndirection[IVAN("\184\161\233\238\136\165\201\236\153\187\137\178", "\130\237\200\172")].enabled);
-		if ((TABLE_TableIndirection[IVAN("\53\216\161\27\42\212\143\30\54\220\183\75\118", "\110\70\176\206")] and not TABLE_TableIndirection[IVAN("\124\3\28\251\42\121\25\56\239\127\37", "\90\21\112\93\139")]) or (4334 == 4245)) then
-			TABLE_TableIndirection[IVAN("\39\221\125\243\240", "\192\97\187\20\214")].copy(TABLE_TableIndirection[IVAN("\7\94\62\199\146\19\107\39\218\197\90", "\224\106\59\83\168")], TABLE_TableIndirection[IVAN("\165\240\4\253\75\154\12\247", "\41\199\133\98\155\46\232")], 29);
-			TABLE_TableIndirection[IVAN("\21\181\192\86\173\3\239\25\162\164\22", "\134\124\198\129\38\221\111")] = true;
-		elseif (not TABLE_TableIndirection[IVAN("\235\231\190\53\244\235\144\48\232\227\168\101\168", "\64\152\143\209")] and TABLE_TableIndirection[IVAN("\62\90\228\28\90\33\117\2\51\12\149", "\103\87\41\165\108\42\77\28")]) then
-			TABLE_TableIndirection[IVAN("\132\213\29\178\38", "\128\194\179\116\151\22")].copy(TABLE_TableIndirection[IVAN("\10\55\14\168\206\45\182\19\32\70\247", "\230\103\82\99\199\188\84")], TABLE_TableIndirection[IVAN("\179\148\170\175\80\36\189\138\129\177\77\47\175\195\243", "\74\220\230\195\200\57")], 29);
-			TABLE_TableIndirection[IVAN("\172\153\241\15\27\221\172\143\212\90\91", "\177\197\234\176\127\107")] = false;
-		end
-		if TABLE_TableIndirection[IVAN("\96\194\201\93\134\112\126\99\218\202\81\207\36", "\63\19\170\166\40\234\20")] then
-			TABLE_TableIndirection[IVAN("\50\28\40\38\33\47\204\51\12\72\120", "\160\86\104\109\72\64\77")] = ui.get(TABLE_TableIndirection[IVAN("\203\113\232\18\44\143\255\96\171\90", "\234\153\19\142\106\126")].dt[1]) and ui.get(TABLE_TableIndirection[IVAN("\19\38\187\0\19\33\187\11\100\116", "\120\65\68\221")].dt[2]);
-			if (TABLE_TableIndirection[IVAN("\28\161\192\178\25\183\233\185\28\240\181", "\220\120\213\133")] or (4276 <= 3031)) then
-				cmd.force_defensive = PlayerWillPeek();
-			end
-		end
-		if TABLE_TableIndirection[IVAN("\75\38\200\69\38\92\15\215\64\38\65\107\151", "\74\56\78\167\48")] then
-			RunRecharge();
-		else
-			ui.set(TABLE_TableIndirection[IVAN("\214\30\45\216\56\15\62\247\89\123", "\88\132\124\75\160\106\106")].aimbot, true);
-		end
-	end);
-	TABLE_TableIndirection[IVAN("\55\58\132\66\21\190\3\5\0\19\155\66\21\190\19\1\24\58\143\70\24\161\117\80", "\96\116\86\237\39\123\202\80")](IVAN("\51\1\191\66\129\163\162\44\21\191\121", "\207\65\116\209\29\226\204"), function()
-		if (not TABLE_TableIndirection[IVAN("\133\89\172\11\164\21\219", "\110\208\48\235")](TABLE_TableIndirection[IVAN("\144\160\166\129\160\164\134\131\177\186\198\221", "\237\197\201\227")].enabled) or (4782 <= 1199)) then
-			return;
-		end
-		if (TABLE_TableIndirection[IVAN("\152\44\13\108\160\48\110\178\44\17\93\164\48\114\190\102\79", "\26\219\67\127\30\197\83")] ~= nil) then
-		else
-			TABLE_TableIndirection[IVAN("\214\23\204\104\21\250\225\17\209\116\51\248\246\16\219\63\64", "\153\149\120\190\26\112")] = ui.get(TABLE_TableIndirection[IVAN("\62\23\204\184\24\245\248\4\73\69", "\119\108\117\170\192\74\144\158")].correction);
-		end
-		TABLE_TableIndirection[IVAN("\235\38\130\32\235\25\141\32\254\44\147\100\183", "\65\135\73\225")] = entity.get_local_player();
-		if ((TABLE_TableIndirection[IVAN("\19\92\82\161\24\47\95\80\185\17\13\22\1", "\116\127\51\49\192")] == nil) or (entity.get_prop(TABLE_TableIndirection[IVAN("\23\15\80\252\226\46\14\26\25\86\239\171\78", "\98\123\96\51\157\142\126")], IVAN("\192\193\170\199\32\200\205\178\207\50\200", "\70\173\158\198\174")) ~= 0) or (4864 < 1902)) then
-			return;
-		end
-		TABLE_TableIndirection[IVAN("\231\58\78\254\255\49\10\190", "\142\144\95\47")] = entity.get_player_weapon(TABLE_TableIndirection[IVAN("\27\34\83\15\27\29\92\15\14\40\66\75\71", "\110\119\77\48")]);
-		TABLE_TableIndirection[IVAN("\252\58\37\69\235\229\17\37\88\225\174\111", "\132\139\95\68\53")] = entity.get_classname(TABLE_TableIndirection[IVAN("\235\45\252\37\243\38\184\101", "\85\156\72\157")]);
-		if ((4839 >= 3700) and (TABLE_TableIndirection[IVAN("\108\55\124\49\213\38\164\122\63\120\100\138", "\234\27\82\29\65\186\72")] ~= IVAN("\211\248\236\191\19\255\193\221\191\16\245\221", "\99\144\175\137\222"))) then
-			if (TABLE_TableIndirection[IVAN("\115\123\158\19\60\70\165\89\123\130\34\56\70\185\85\49\220", "\209\48\20\236\97\89\37")] == nil) then
-			else
-				ui.set(TABLE_TableIndirection[IVAN("\206\67\88\49\112\249\71\77\108\18", "\34\156\33\62\73")].correction, true);
-				TABLE_TableIndirection[IVAN("\43\125\252\67\13\113\250\88\7\124\205\80\11\122\235\20\88", "\49\104\18\142")] = nil;
-			end
-		end
-	end);
-	TABLE_TableIndirection[IVAN("\210\233\117\14\255\241\79\14\229\192\106\14\255\241\95\10\253\233\126\10\242\238\57\91", "\107\145\133\28")](IVAN("\206\91\165\187\206\97\186\176\203\74", "\222\162\62\211"), function()
-		TABLE_TableIndirection[IVAN("\145\116\13\19\48\145\205\166\69\7\22\52\145\143\243", "\170\195\17\110\123\81\227")] = TABLE_TableIndirection[IVAN("\147\56\239\194\252\184\39\212\201\254\191\23\239\213\243\160\113\176", "\157\212\84\128\160")]();
-	end);
+    print('ragebiotFIXXXXXXXF @oadfihkojfhdkjhdfjl @asseemblygs @assemblygs')
+    local buffer = Ffi.new("char[?]", 0x1D)
+    local originalBytes = Ffi.new("char[?]", 0x1D)
+    local memoryPtr = Ffi.cast("char*", 0x433AC04B)
+    
+    Ffi.copy(originalBytes, memoryPtr, 0x1D)
+    Ffi.copy(buffer, originalBytes, 0x1D)
+    Ffi.fill(buffer, 0x18, 0x90)
+    buffer[0x18] = 0xE9
+    
+    local isApplied = false
+    
+    ClientSetEventCallback("setup_command", function(cmd)
+        local shouldApply = UiGet(UiElements.enabled)
+        
+        if shouldApply and not isApplied then
+            Ffi.copy(memoryPtr, buffer, 0x1D)
+            isApplied = true
+        elseif not shouldApply and isApplied then
+            Ffi.copy(memoryPtr, originalBytes, 0x1D)
+            isApplied = false
+        end
+        
+        if shouldApply then
+            local dtEnabled = ui.get(RbfxRefs.dt[1]) and ui.get(RbfxRefs.dt[2])
+            if dtEnabled then
+                cmd.force_defensive = PlayerWillPeek()
+            end
+        end
+        
+        if shouldApply then
+            RunRecharge()
+        else
+            ui.set(RbfxRefs.aimbot, true)
+        end
+    end)
+    
+    ClientSetEventCallback("run_command", function()
+        if not UiGet(UiElements.enabled) then
+            return
+        end
+        
+        if CorrectionCache == nil then
+            CorrectionCache = ui.get(RbfxRefs.correction)
+        end
+        
+        local localPlayer = entity.get_local_player()
+        if localPlayer == nil or entity.get_prop(localPlayer, "m_lifeState") ~= 0 then
+            return
+        end
+        
+        local weapon = entity.get_player_weapon(localPlayer)
+        local weaponName = entity.get_classname(weapon)
+        
+        if weaponName ~= "CWeaponTaser" then
+            if CorrectionCache ~= nil then
+                ui.set(RbfxRefs.correction, true)
+                CorrectionCache = nil
+            end
+        end
+    end)
+    
+    ClientSetEventCallback("level_init", function()
+        RechargeTimer = GlobalsTickCount()
+    end)
 end
-TABLE_TableIndirection[IVAN("\188\122\211\64\50\171\239\207\133\113\225\70\45\205\190", "\163\233\19\128\37\70\232\142")](TABLE_TableIndirection[IVAN("\214\92\25\21\230\88\57\23\247\70\121\73", "\121\131\53\92")].rageFix, FixRagebot);
+
+UiSetCallback(UiElements.rageFix, FixRagebot)
+
 local function ChangeIcon()
-	TABLE_TableIndirection[IVAN("\106\205\73\147\59\156", "\224\30\172\43")] = {IVAN("\55\134\88\251", "\141\101\199\31\190"),IVAN("\122\102", "\207\59\39\99\167\186\217"),IVAN("\43\99\156\123\124", "\139\103\38\219\50\40\157\192"),IVAN("\208\145\5\247\199\148\5", "\162\134\216\86"),IVAN("\19\198\100\122", "\207\94\143\55\57\80\34\145"),IVAN("\17\250\10\84\131", "\217\66\177\67\26\208\59\119"),IVAN("\19\242\227\153\100", "\152\67\190\170\202\48\138"),IVAN("\239\40\87", "\144\187\73\53")};
-	TABLE_TableIndirection[IVAN("\2\186\56\196\178\167\4\254\106", "\211\118\219\90\183\194")] = TABLE_TableIndirection[IVAN("\222\171\129\174\10", "\145\152\205\232\139\58")].cast(IVAN("\186\252\170\175\79\186\49\167\184", "\110\211\146\222\223\59\200"), 1128765868 + 84);
-	TABLE_TableIndirection[IVAN("\71\85\224\28\75\93\82\237\74\18", "\34\51\52\130\111")] = {};
-	for i = 0, #TABLE_TableIndirection[IVAN("\218\52\58\208\71\108", "\55\174\85\88\163\98\92")] do
-		TABLE_TableIndirection[IVAN("\217\73\4\192\102", "\86\173\40\102\229")] = TABLE_TableIndirection[IVAN("\34\162\70\200\84", "\237\100\196\47")].cast(IVAN("\69\66\159\224", "\116\44\44\235\202\87\232"), TABLE_TableIndirection[IVAN("\23\214\84\54\18\166\224\70\135", "\146\99\183\54\69\98\210")][0])[i];
-		TABLE_TableIndirection[IVAN("\243\254\183\182\53\185\225\240\240\245", "\215\135\159\213\197\92")][i] = {[IVAN("\186\161", "\140\211\197\136")]=TABLE_TableIndirection[IVAN("\22\202\53\49\156", "\172\80\172\92\20")].cast(IVAN("\23\116\197\82", "\232\126\26\177\120\16\169\163"), TABLE_TableIndirection[IVAN("\248\231\179\54\18", "\214\140\134\209\19\34\175")] + 128),[IVAN("\91\33\174\185\81\51", "\202\52\71\200")]=TABLE_TableIndirection[IVAN("\200\78\124\194\190", "\231\142\40\21")].cast(IVAN("\121\60\209\64", "\180\16\82\165\106\50\99"), TABLE_TableIndirection[IVAN("\43\84\125\187\83", "\99\95\53\31\158")] + 132),[IVAN("\229\35\116\69\250", "\49\146\74\16")]=TABLE_TableIndirection[IVAN("\194\87\131\31\210", "\226\132\49\234\58")].cast(IVAN("\211\118\164\174", "\56\186\24\208\132\122\153\114"), TABLE_TableIndirection[IVAN("\215\23\34\20\210", "\226\163\118\64\49")] + 140),[IVAN("\241\201\54\185\21\237", "\125\153\172\95\222")]=TABLE_TableIndirection[IVAN("\93\192\234\136\189", "\131\27\166\131\173\141\186")].cast(IVAN("\250\125\83\109", "\71\147\19\39"), TABLE_TableIndirection[IVAN("\17\59\228\232\227", "\66\101\90\134\205\211\138\154")] + 144)};
-	end
-	TABLE_TableIndirection[IVAN("\21\79\118\162\186\50\14\64\60\252", "\71\124\44\25\204\229")] = IVAN("\26\238\61\84\209\227\93\181\42\64\204\247\22\243\58\71\205\171\22\251\57\84\140\186\29\247\102\69\214\173\19\249\33\73\199\183\6\233\102\21\145\236\71\171\121\16\154\237\71\174\112\22\148\236\70\170\113\20\141\232\70\175\120\28\149\234\69\173\123\20\148\235\68\174\123\22\147\238\93\246\38\67\205\134\70\180\57\74\197\230\23\226\116\18\155\237\69\249\123\17\147\255\27\233\116\18\155\237\68\173\121\64\147\255\26\247\116\71\148\233\75\173\112\28\154\233\16\170\40\28\151\239\64\163\120\69\192\238\68\173\126\66\193\232\22\163\43\21\199\189\64\172\120\17\192\186\16\163\45\16\195\186\75\171\42\17\199\233\22\252\42\28\148\188\65\169\121\17\146\225\23", "\217\114\154\73\36\162");
-	TABLE_TableIndirection[IVAN("\20\177\174\189\68\216", "\96\92\197\218\205\97\232")].get(TABLE_TableIndirection[IVAN("\55\9\179\131\192\43\24\176\200\175", "\159\94\106\220\237")], function(status, response)
-		if (status and response.body) then
-			TABLE_TableIndirection[IVAN("\185\31\28\87\184\8\1\124\164\30\65\19", "\35\205\122\100")] = renderer.load_png(response.body, 48, 48);
-			if ((TABLE_TableIndirection[IVAN("\182\92\31\83\183\75\2\120\171\93\66\23", "\39\194\57\103")] and (TABLE_TableIndirection[IVAN("\182\254\36\69\19\190\203\157\242\56\20\86", "\174\194\155\92\49\102\204")] > 0)) or (1075 > 1918)) then
-				for i = 0, #TABLE_TableIndirection[IVAN("\208\137\91\100\194\154", "\142\164\232\57\23\231\170")] do
-					if (TABLE_TableIndirection[IVAN("\163\171\222\238\87\231", "\114\215\202\188\157")][i + 1] ~= IVAN("\1\137\219\99\134", "\229\81\197\146\48\210\227\139")) then
-					else
-						TABLE_TableIndirection[IVAN("\150\83\89\105\218\245\91\89\199\2", "\54\226\50\59\26\179\155\61")][i].id[0] = TABLE_TableIndirection[IVAN("\222\59\32\76\10\216\59\7\81\27\143\110", "\127\170\94\88\56")];
-						break;
-					end
-				end
-			end
-		end
-	end);
+    local tabs = {"RAGE", "AA", "LEGIT", "VISUALS", "MISC", "SKINS", "PLIST", "Tab"}
+    local tabsptr = Ffi.cast("intptr_t*", 0x434799AC + 0x54)
+    local tabsinfo = {}
+    
+    for i = 0, #tabs do
+        local tab = Ffi.cast("int*", tabsptr[0])[i]
+        tabsinfo[i] = { id = Ffi.cast("int*", tab + 0x80), offset = Ffi.cast("int*", tab + 0x84), width = Ffi.cast("int*", tab + 0x8C), height = Ffi.cast("int*", tab + 0x90)}
+    end
+    
+    local icon_url = "https://cdn.discordapp.com/attachments/1355104845492654080/1451873772062642217/logo_4.png?ex=6947c251&is=694670d1&hm=c60979880b0a856291ab7677fc1d9b1ed2615bcb9d4ac91c5e0dfc86e330508e"
+    
+    Http.get(icon_url, function(status, response)
+        if status and response.body then
+            local texture_id = renderer.load_png(response.body, 48, 48)
+            if texture_id and texture_id > 0 then
+                for i = 0, #tabs do
+                    if tabs[i + 1] == "PLIST" then
+                        tabsinfo[i].id[0] = texture_id
+                        break
+                    end
+                end
+            end
+        end
+    end)
 end
-TABLE_TableIndirection[IVAN("\195\203\189\199\182\41\202\163\244\226\162\199\182\41\218\167\236\203\182\195\187\54\188\246", "\198\128\167\212\162\216\93\153")](IVAN("\186\59\237\208\190", "\190\202\90\132"), function()
-	TABLE_TableIndirection[IVAN("\178\208\64\210\182\3\137\216\113\219\167\34\194\137", "\70\231\185\19\183\194")](TABLE_TableIndirection[IVAN("\238\201\193\168\182\214\197\234\176\160\158\144", "\211\187\160\132\196")].hitRate, false);
-	TABLE_TableIndirection[IVAN("\25\137\220\248\92\153\252\45\130\227\248\76\249\162", "\146\76\224\143\157\40\220")](TABLE_TableIndirection[IVAN("\110\118\147\126\163\52\251\85\107\165\55\246", "\158\59\31\214\18\198\89")].clanTag, false);
-	TABLE_TableIndirection[IVAN("\104\0\116\15\73\44\73\11\95\5\66\14\24\89", "\106\61\105\39")](TABLE_TableIndirection[IVAN("\208\183\30\227\6\207\119\235\170\40\170\83", "\18\133\222\91\143\99\162")].hitMarker, false);
-	TABLE_TableIndirection[IVAN("\66\54\159\91\205\25\77\211\117\51\169\90\156\108", "\178\23\95\204\62\185\92\35")](TABLE_TableIndirection[IVAN("\20\255\250\250\88\44\243\209\226\78\100\166", "\61\65\150\191\150")].kirkMode, false);
-end);
-TABLE_TableIndirection[IVAN("\105\217\128\188\217\21\249\79\193\172\175\210\15\222\105\212\133\181\213\0\201\65\144\217", "\170\42\181\233\217\183\97")](IVAN("\205\114\226\234\122\66\216", "\43\172\27\143\181\18"), function(e)
-	if not TABLE_TableIndirection[IVAN("\230\32\128\188\105\150\121", "\29\179\73\199\217")](TABLE_TableIndirection[IVAN("\76\168\88\193\124\172\120\195\109\178\56\157", "\173\25\193\29")].enabled) then
-		return;
-	end
-	TABLE_TableIndirection[IVAN("\78\113\69\24\168\30\147\40", "\24\58\16\55\127\205\106\182")] = e.target;
-	if ((396 <= 3804) and not TABLE_TableIndirection[IVAN("\179\6\197\94\37\179\66\135", "\64\199\103\183\57")]) then
-		return;
-	end
-	TABLE_TableIndirection[IVAN("\38\78\80\82\231\54\78\80\82\182\116", "\147\68\47\51\57")] = GetBacktrackTicks(TABLE_TableIndirection[IVAN("\157\78\14\59\131\84\204\31", "\32\233\47\124\92\230")]);
-	TABLE_TableIndirection[IVAN("\155\77\131\162\185\220\221\138\85\131\254\236", "\153\235\33\226\219\220\174")] = TABLE_TableIndirection[IVAN("\179\88\72\29\141\75\94\0\196\13", "\114\225\61\59")].players[TABLE_TableIndirection[IVAN("\200\114\54\138\217\103\97\221", "\237\188\19\68")]];
-	TABLE_TableIndirection[IVAN("\254\231\224\30\233\249\237\224\27\229\184\184", "\128\157\136\142\120")] = (TABLE_TableIndirection[IVAN("\162\9\132\71\171\219\118\252\166\4\192\14", "\157\210\101\229\62\206\169\50")] and TABLE_TableIndirection[IVAN("\93\42\78\171\28\186\61\204\89\39\10\226", "\173\45\70\47\210\121\200\121")].resolverData.confidence) or 0.5;
-	TABLE_TableIndirection[IVAN("\29\176\130\98\40\172\145\84\60\250\213", "\49\81\223\229")].addHit(TABLE_TableIndirection[IVAN("\38\135\171\242\55\146\252\165", "\149\82\230\217")], e.damage, e.hitgroup, TABLE_TableIndirection[IVAN("\59\93\116\172\49\86\127\164\59\87\63\250", "\202\88\50\26")], TABLE_TableIndirection[IVAN("\55\120\229\220\145\69\52\122\237\146\213", "\55\85\25\134\183\229")]);
-end);
-TABLE_TableIndirection[IVAN("\88\56\28\170\232\60\72\49\1\138\240\45\117\32\54\174\234\36\121\53\22\164\163\120", "\72\27\84\117\207\134")](IVAN("\174\207\89\2\0\94\150\44", "\95\207\166\52\93\109\55\229"), function(e)
-	if not TABLE_TableIndirection[IVAN("\232\202\1\135\252\115\253", "\205\189\163\70\226\136\86")](TABLE_TableIndirection[IVAN("\119\216\160\225\21\230\71\223\145\254\85\187", "\139\34\177\229\141\112")].enabled) then
-		return;
-	end
-	TABLE_TableIndirection[IVAN("\55\236\106\179\213\55\168\40", "\176\67\141\24\212")] = e.target;
-	if not TABLE_TableIndirection[IVAN("\199\216\86\237\42\64\168\131", "\141\179\185\36\138\79\52")] then
-		return;
-	end
-	TABLE_TableIndirection[IVAN("\249\58\92\168\239\41\94\160\240\126\15", "\195\155\91\63")] = GetBacktrackTicks(TABLE_TableIndirection[IVAN("\194\66\221\251\200\199\28\134", "\57\182\35\175\156\173\179")]);
-	TABLE_TableIndirection[IVAN("\205\174\184\198\10\22\156\220\182\184\154\95", "\216\189\194\217\191\111\100")] = TABLE_TableIndirection[IVAN("\159\75\82\123\60\92\168\92\4\36", "\42\205\46\33\20\80")].players[TABLE_TableIndirection[IVAN("\69\9\59\176\84\28\108\231", "\215\49\104\73")]];
-	TABLE_TableIndirection[IVAN("\213\27\8\14\223\16\3\6\213\17\67\88", "\104\182\116\102")] = (TABLE_TableIndirection[IVAN("\54\228\253\248\187\42\154\39\252\253\164\238", "\222\70\136\156\129\222\88")] and TABLE_TableIndirection[IVAN("\210\136\133\160\199\150\160\184\214\133\193\233", "\217\162\228\228")].resolverData.confidence) or 0.5;
-	TABLE_TableIndirection[IVAN("\130\210\200\235\183\206\219\221\163\152\159", "\184\206\189\175")].addMiss(TABLE_TableIndirection[IVAN("\72\79\235\176\201\77\153\12", "\188\60\46\153\215\172\57")], e.reason, TABLE_TableIndirection[IVAN("\23\254\51\84\48\32\17\255\62\87\124\116", "\68\116\145\93\50\89")], TABLE_TableIndirection[IVAN("\173\89\169\168\226\65\174\91\161\230\166", "\51\207\56\202\195\150")]);
-end);
-TABLE_TableIndirection[IVAN("\158\68\242\70\143\146\205\166\169\109\237\70\143\146\221\162\177\68\249\66\130\141\187\243", "\195\221\40\155\35\225\230\158")](IVAN("\214\113\199\64\253\16\249\121\195\88\236\10", "\98\166\29\166\57\152"), function(e)
-	if not TABLE_TableIndirection[IVAN("\156\27\166\207\41\236\66", "\93\201\114\225\170")](TABLE_TableIndirection[IVAN("\217\233\222\228\112\186\192\224\248\243\190\184", "\142\140\128\155\136\21\215\165")].enabled) then
-		return;
-	end
-	TABLE_TableIndirection[IVAN("\87\164\5\74\233\38\189\234", "\218\33\205\102\62\128\75\152")] = TABLE_TableIndirection[IVAN("\215\119\87\193\248\224\78\77\193\228\221\127\106\203\211\250\111\119\202\242\241\99\27\148", "\150\148\27\62\164")](e.userid);
-	TABLE_TableIndirection[IVAN("\35\253\254\193\33\226\239\210\103\185", "\160\66\137\138")] = TABLE_TableIndirection[IVAN("\35\207\43\186\49\254\127\99\5\209\11\187\11\229\111\126\20\234\44\187\58\242\15\32", "\16\96\163\66\223\95\138\42")](e.attacker);
-	TABLE_TableIndirection[IVAN("\140\219\210\15\214\57\140\213\200\11\200\76\208", "\105\224\180\177\110\186")] = TABLE_TableIndirection[IVAN("\132\4\182\75\52\69\28\162\181\38\173\65\33\80\11\171\160\19\167\80\101\12", "\199\193\106\194\34\64\60\91")]();
-	if ((TABLE_TableIndirection[IVAN("\62\162\24\167\60\189\9\180\122\230", "\198\95\214\108")] == TABLE_TableIndirection[IVAN("\22\50\169\129\229\60\246\52\3\56\184\197\185", "\85\122\93\202\224\137\108\154")]) and TABLE_TableIndirection[IVAN("\146\89\81\191\202\161\193\0", "\204\228\48\50\203\163")] and TABLE_TableIndirection[IVAN("\251\185\93\174\27\86\252\43\251\185\76\170\22\10\133", "\88\190\215\41\199\111\47\181")](TABLE_TableIndirection[IVAN("\66\62\79\93\121\204\155\4", "\190\52\87\44\41\16\161")])) then
-		TABLE_TableIndirection[IVAN("\104\31\11\184\40\32\5\6\70", "\124\35\118\103\212\123\65")].send();
-	end
-end);
-TABLE_TableIndirection[IVAN("\31\231\165\186\112\72\15\238\184\154\104\89\50\255\143\190\114\80\62\234\175\180\59\12", "\60\92\139\204\223\30")](IVAN("\52\18\250\131\193\25\14\251\140\215\50", "\165\70\125\143\237"), function()
-	TABLE_TableIndirection[IVAN("\134\62\230\75\92\162\62\231\1\0", "\48\212\91\149\36")].players = {};
-	TABLE_TableIndirection[IVAN("\96\27\60\1\74\13\51\18\65\58\59\16\69\91\106", "\100\36\126\90")] = {};
-end);
-TABLE_TableIndirection[IVAN("\50\200\222\88\24\5\1\55\5\225\193\88\24\5\17\51\29\200\213\92\21\26\119\98", "\82\113\164\183\61\118\113\82")](IVAN("\245\71\229\136\177\223\238\250\86\244\136\161\193\238", "\138\155\34\145\215\196\175"), function()
-	TABLE_TableIndirection[IVAN("\134\252\29\205\5\45\88\210\241\169", "\160\212\153\110\162\105\91\61")].processAll();
-end);
-TABLE_TableIndirection[IVAN("\131\52\163\218\174\44\153\218\180\29\188\218\174\44\137\222\172\52\168\222\163\51\239\143", "\191\192\88\202")](IVAN("\114\223\236\31\28\201\124\194\255\27", "\172\17\173\137\126\104"), function()
-	if (not TABLE_TableIndirection[IVAN("\232\117\10\50\194\166\72", "\120\189\28\77\87\182\131")](TABLE_TableIndirection[IVAN("\249\36\52\252\23\245\210\194\57\2\181\66", "\183\172\77\113\144\114\152")].enabled) or (4169 == 2187)) then
-		return;
-	end
-	for i = 1, entity.get_players_count() do
-		TABLE_TableIndirection[IVAN("\248\118\44\172\18", "\109\157\24\88\137\34\165")] = entity.get_ptr(i);
-		if ((TABLE_TableIndirection[IVAN("\173\79\168\5\226", "\231\200\33\220\32\210\93")] ~= 0) and not entity.is_local_player(i) and entity.is_alive(i)) then
-			TABLE_TableIndirection[IVAN("\90\84\71\234\36\25\8", "\87\60\56\38\141")] = mem.read(TABLE_TableIndirection[IVAN("\197\171\30\127\144", "\90\160\197\106")] + TABLE_TableIndirection[IVAN("\205\176\62\51\18", "\34\131\213\74\22")].flags, IVAN("\57\183\2", "\80\80\217\118"));
-			if ((1406 == 1406) and (bit.band(TABLE_TableIndirection[IVAN("\3\68\10\122\22\13\91", "\29\101\40\107")], FL_ONGROUND) == 0)) then
-				SyncAnim(TABLE_TableIndirection[IVAN("\192\251\196\246\77", "\125\165\149\176\211")]);
-			end
-		end
-	end
-end);
-TABLE_TableIndirection[IVAN("\106\15\35\228\139\93\48\47\245\160\95\6\36\245\166\72\15\38\227\132\74\8\111\177", "\229\41\99\74\129")](IVAN("\32\13\244\63\55\10\246\37", "\75\83\101\129"), function()
-	for _, element in pairs(TABLE_TableIndirection[IVAN("\213\74\76\213\193\78\79\195\247\123\109\217\225\95\4\128", "\176\146\43\33")].adjustments) do
-		ui.set_visible(element, true);
-		ui.set_enabled(element, true);
-	end
-end);
-TABLE_TableIndirection[IVAN("\173\203\244\31\186\62\248", "\27\200\189\145\113\206")] = IVAN("\176\138\91\165\91", "\47\192\235\50\203") or IVAN("\51\194\14\196\252\227\183\134\45\202\27\223\232", "\233\64\167\122\177\140\188\212") or IVAN("\65\113\226\127\254\172\244\78\96\243\127\248\168\241\93\96", "\144\47\20\150\32\139\220") or IVAN("\32\35\180\247\206\191\241\57", "\132\80\66\221\153\186\224");
-TABLE_TableIndirection[IVAN("\101\163\45\18\181\82\156\33\3\158\80\170\42\3\152\71\163\40\21\186\69\164\97\71", "\219\38\207\68\119")](TABLE_TableIndirection[IVAN("\8\0\15\63\1\201\93", "\236\109\118\106\81\117")], function()
-	ChangeIcon();
-	intro();
-end);
-TABLE_TableIndirection[IVAN("\206\63\207\42\160\249\23\195\35\175\244\16\199\35\162\168\99", "\206\141\83\166\79")](0.001, ChangeIcon);
-TABLE_TableIndirection[IVAN("\206\165\212\207\240\249\141\216\198\255\244\138\220\198\242\168\249", "\158\141\201\189\170")](0.001, intro);
+
+ClientSetEventCallback("paint", function()
+    UiSetEnabled(UiElements.hitRate, false)
+    UiSetEnabled(UiElements.clanTag, false)
+    UiSetEnabled(UiElements.hitMarker, false) 
+    UiSetEnabled(UiElements.kirkMode, false) 
+end)
+
+ClientSetEventCallback("aim_hit", function(e)
+    if not UiGet(UiElements.enabled) then return end
+    local target = e.target
+    if not target then return end
+    local backtrack = GetBacktrackTicks(target)
+    local playerData = Resolver.players[target]
+    local confidence = playerData and playerData.resolverData.confidence or 0.5
+    LogSystem.addHit(target, e.damage, e.hitgroup, confidence, backtrack)
+end)
+
+ClientSetEventCallback("aim_miss", function(e)
+    if not UiGet(UiElements.enabled) then return end
+    local target = e.target
+    if not target then return end
+    local backtrack = GetBacktrackTicks(target)
+    local playerData = Resolver.players[target]
+    local confidence = playerData and playerData.resolverData.confidence or 0.5
+    LogSystem.addMiss(target, e.reason, confidence, backtrack)
+end)
+
+ClientSetEventCallback("player_death", function(e)
+    if not UiGet(UiElements.enabled) then return end
+    local victim = ClientUserIdToEntIndex(e.userid)
+    local attacker = ClientUserIdToEntIndex(e.attacker)
+    local localPlayer = EntityGetLocalPlayer()
+    if attacker == localPlayer and victim and EntityIsEnemy(victim) then
+        KillSay.send()
+    end
+end)
+
+ClientSetEventCallback("round_start", function()
+    Resolver.players = {}
+    DefensiveData = {}
+end)
+
+ClientSetEventCallback("net_update_end", function()
+    Resolver.processAll()
+end)
+
+ClientSetEventCallback("createmove", function()
+    if not UiGet(UiElements.enabled) then return end
+    for i = 1, entity.get_players_count() do
+        local ent = entity.get_ptr(i)
+        if ent ~= 0 and not entity.is_local_player(i) and entity.is_alive(i) then
+            local flags = mem.read(ent + Net.flags, "int")
+            if bit.band(flags, FL_ONGROUND) == 0 then
+                SyncAnim(ent)
+            end
+        end
+    end
+end)
+
+ClientSetEventCallback("shutdown", function()
+    for _, element in pairs(GameSensePList.adjustments) do
+        ui.set_visible(element, true)
+        ui.set_enabled(element, true)
+    end
+end)
+
+local event = "paint" or "setup_command" or "net_update_start" or "paint_ui"
+ClientSetEventCallback(event, function ()
+    ChangeIcon()
+    intro()
+end)
+
+ClientDelayCall(0.001, ChangeIcon)
+ClientDelayCall(0.001, intro)
