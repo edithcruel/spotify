@@ -865,7 +865,7 @@ local function intro()
                 local w, h = client.screen_size()
                 local prefix = "ASSEMBLY"
                 local arrow = "   "
-                local suffix = UserRole:upper()
+                local suffix = "DEVELOPER"
                 local font = "-"
                 local base_y = h - 40
                 local y = base_y + lift_offset
