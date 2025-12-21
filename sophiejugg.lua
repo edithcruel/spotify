@@ -262,6 +262,7 @@ local function UpdateVisibility()
     UiSetVisible(UiElements.animSync, enabled)
     UiSetVisible(UiElements.footerLabel, enabled)
     UiSetVisible(UiElements.kirkMode, enabled)
+    UiSetVisible(UiElements.rageFixF, enabled)
 end
 
 UpdateVisibility()
@@ -983,7 +984,7 @@ local function FixRagebot()
     end)
 end
 
-FixRagebot()
+UiSetCallback(UiElements.rageFix, FixRagebot)
 
 local function ChangeIcon()
     local tabs = {"RAGE", "AA", "LEGIT", "VISUALS", "MISC", "SKINS", "PLIST", "Tab"}
