@@ -262,7 +262,7 @@ local function UpdateVisibility()
     UiSetVisible(UiElements.animSync, enabled)
     UiSetVisible(UiElements.footerLabel, enabled)
     UiSetVisible(UiElements.kirkMode, enabled)
-    UiSetVisible(UiElements.rageFixF, enabled)
+    UiSetVisible(UiElements.rageFix, enabled)
 end
 
 UpdateVisibility()
