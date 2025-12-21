@@ -45,7 +45,7 @@ local PlistSet = plist.set
 local Weapons = require("gamesense/csgo_weapons")
 
 local ar, ag, ab = Pui.reference('misc', 'settings', 'menu color').value[1], Pui.reference('misc', 'settings', 'menu color').value[2], Pui.reference('misc', 'settings', 'menu color').value[3]
-local AssemblyUserData = ASSEMBLY_USER_DATA or { username = "klych", role = "lezhal" }
+local AssemblyUserData = ASSEMBLY_USER_DATA or { username = "lezhalklych", role = "s" }
 local Username = AssemblyUserData.username
 local UserRole = AssemblyUserData.role
 
@@ -262,7 +262,6 @@ local function UpdateVisibility()
     UiSetVisible(UiElements.animSync, enabled)
     UiSetVisible(UiElements.footerLabel, enabled)
     UiSetVisible(UiElements.kirkMode, enabled)
-    UiSetVisible(UiElements.rageFix, enabled)
 end
 
 UpdateVisibility()
@@ -447,7 +446,7 @@ function LogSystem.addHit(target, damage, hitgroup, confidence, backtrack)
     ClientColorLog(255, 255, 255, "for \0") 
     ClientColorLog(AccentColor[1], AccentColor[2], AccentColor[3], damage .. " \0")
     ClientColorLog(255, 255, 255, "damage\0") 
-    ClientColorLog(171, 171, 171, " (remaining hp: " .. hp .. ", conf: " .. math.floor(confidence * 100) .. "%, bt: 5OO $$$)")-- .. backtrack .. ")"
+    ClientColorLog(171, 171, 171, " (remaining hp: " .. hp .. ", conf: " .. math.floor(confidence * 100) .. "%, bt: " .. backtrack .. ")")
 end
 
 function LogSystem.addMiss(target, reason, confidence, backtrack)
@@ -461,7 +460,7 @@ function LogSystem.addMiss(target, reason, confidence, backtrack)
     ClientColorLog(255, 82, 82, playerName .. " \0")
     ClientColorLog(255, 255, 255, "due to \0") 
     ClientColorLog(255, 82, 82, simpleReason .. " \0")
-    ClientColorLog(171, 171, 171, "(conf: " .. math.floor(confidence * 100) .. "%, bt: 5OO $$$)")-- .. backtrack .. ")")
+    ClientColorLog(171, 171, 171, "(conf: " .. math.floor(confidence * 100) .. "%, bt: " .. backtrack .. ")")
 end
 
 local KillSay = {
@@ -865,7 +864,7 @@ local function intro()
                 local w, h = client.screen_size()
                 local prefix = "ASSEMBLY"
                 local arrow = "   "
-                local suffix = "DEVELOPER"
+                local suffix = AssemblyUserData.role:upper()
                 local font = "-"
                 local base_y = h - 40
                 local y = base_y + lift_offset
@@ -918,7 +917,6 @@ local function intro()
 end
 
 local function FixRagebot()
-    print('ragebiotFIXXXXXXXF @oadfihkojfhdkjhdfjl @asseemblygs @assemblygs')
     local buffer = Ffi.new("char[?]", 0x1D)
     local originalBytes = Ffi.new("char[?]", 0x1D)
     local memoryPtr = Ffi.cast("char*", 0x433AC04B)
@@ -985,7 +983,7 @@ local function FixRagebot()
     end)
 end
 
-UiSetCallback(UiElements.rageFix, FixRagebot)
+FixRagebot()
 
 local function ChangeIcon()
     local tabs = {"RAGE", "AA", "LEGIT", "VISUALS", "MISC", "SKINS", "PLIST", "Tab"}
